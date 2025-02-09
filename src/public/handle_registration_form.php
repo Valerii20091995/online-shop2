@@ -22,7 +22,6 @@ function Validate(array $post): array
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = "Некорректный email";
         } else {
-            // соединение с БД
             $pdo =new PDO("pgsql:host=db; port=5432; dbname=mydb;", 'valera', 'qwerty');
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
             $stmt->execute([':email' => $email]);
@@ -52,7 +51,7 @@ function Validate(array $post): array
 
 $errors = Validate($_POST);
 
-// внесение в БД, если нет ошибок
+// сохранение в БД, если нет ошибок
 if (empty($errors)) {
     $name = $_POST['name'];
     $email = $_POST['mail'];
@@ -62,7 +61,7 @@ if (empty($errors)) {
 
     $pdo =new PDO("pgsql:host=db; port=5432; dbname=mydb;", 'valera', 'qwerty');
 
-//добавление пользователей
+//добавление  новых пользователей
     $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
     $stmt->execute([':name' => $name, ':email' => $email, ':password' => $password]);
 
