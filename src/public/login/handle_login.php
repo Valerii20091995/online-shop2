@@ -1,13 +1,13 @@
 <?php
 $errors = [];
-function validate(array $posst): array
+function validate(array $date): array
 {
     $errors = [];
     // проверка наличия переменных
-    if (isset($post['username'])) {
+    if (!isset($date['username'])) {
         $errors['username'] = "Поле Username обязательно для заполнения!";
     }
-    if (isset($post['password'])) {
+    if (!isset($date['password'])) {
         $errors['password'] = "Поле Password обязательно для заполнения!";
     }
     return $errors;
@@ -35,13 +35,10 @@ if (empty($errors)) {
             //успешный вход через сессии
             session_start();
             $_SESSION['userId'] = $user['id'];
-
-            //успешный вход через куки
-            //setcookie('user_id', $user['id']);
-            header("Location: /catalog.php");
+            header("Location: /catalog");
         } else {
             $errors['username'] = "Логин или пароль указаны неверно!";
         }
     }
 }
-require_once './login_form.php';
+require_once './login/login_form.php';

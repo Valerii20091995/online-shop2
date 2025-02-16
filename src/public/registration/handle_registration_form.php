@@ -1,13 +1,13 @@
 <?php
 
 
-function Validate(array $post): array
+function Validate(array $data): array
 {
     $errors = [];
 
 // объявление и валидация данных
-    if (isset($post['name'])) {
-        $name = $post['name'];
+    if (isset($data['name'])) {
+        $name = $data['name'];
         if (strlen($name) < 3) {
             $errors['name'] = "Имя не может содержать меньше 3 символов";
         }
@@ -15,8 +15,8 @@ function Validate(array $post): array
         $errors['name'] = "Имя должно быть заполнено";
     }
 
-    if (isset($post['mail'])) {
-        $email = $post['mail'];
+    if (isset($data['mail'])) {
+        $email = $data['mail'];
         if (strlen($email) < 3) {
             $errors['email'] = "Email не может содержать меньше 3 символов";
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -34,12 +34,12 @@ function Validate(array $post): array
         $errors['email'] = "Email должен быть заполнен";
     }
 // проверка совпадения паролей
-    if (isset($post['psw'])) {
-        $password = $post['psw'];
+    if (isset($data['psw'])) {
+        $password = $data['psw'];
         if (strlen($password) < 3) {
             $errors['psw'] = "Пароль не может содержать меньше 3 символов";
         }
-        $passwordRepeat = $post["psw-repeat"];
+        $passwordRepeat = $data["psw-repeat"];
         if ($password !== $passwordRepeat) {
             $errors['psw-repeat'] = "Пароли не совпадают!";
         }
@@ -71,4 +71,4 @@ if (empty($errors)) {
     $result = $stmt->fetch();
     print_r ($result);
 }
-require_once './registration_form.php';
+require_once './registration/registration_form.php';

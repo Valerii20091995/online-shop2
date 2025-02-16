@@ -6,7 +6,7 @@ if (isset($_SESSION['userId'])) {
     //если пользователь найден, выдаем каталог
     $stmt = $pdo->query('SELECT * FROM products');
     $products = $stmt->fetchAll();
-    require_once './catalog_page.php';
+    require_once './catalog/catalog_form.php';
 } else {
-    header("Location: /login_form.php");
+    header("Location: ./login");
 }

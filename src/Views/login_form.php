@@ -1,5 +1,5 @@
 <div class="wrapper">
-    <form class="form-signin" action="handle.login.php" method="POST">
+    <form class="form-signin" action="./login" method="POST">
         <h2 class="form-signin-heading">Please login</h2>
         <input type="text" class="form-control" name="username" placeholder="Email Address" required="" autofocus="" />
         <?php if (isset($errors['username'])):  ?>
