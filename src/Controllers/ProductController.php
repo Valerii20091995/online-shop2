@@ -41,11 +41,11 @@ class ProductController
 
         $errors = $this->ValidateAddProduct($_POST);
         if (empty($errors)) {
-            require_once '../Model/Product.php';
+            require_once '../Model/User_Product.php';
             $userId = $_SESSION['userId'];
             $productId = (int)$_POST['product_id'];
             $amount = (int)$_POST['amount'];
-            $productModel = new Product();
+            $productModel = new User_Product();
             $products = $productModel->getByUserProducts($userId, $productId);
             if ($products === false) {
                 $productModel->addProductByUser($userId,$productId, $amount);

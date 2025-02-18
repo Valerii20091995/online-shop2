@@ -144,6 +144,18 @@ class UserController
     // Изменения профиля
     public function getEditProfile()
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+        if (isset($_SESSION['userId'])) {
+            $userId = $_SESSION['userId'];
+            require_once '../Model/User.php';
+            $userModel = new User();
+            $user = $userModel->userVerification($userId);
+        } else {
+            header("Location: /login");
+            exit;
+        }
         require_once '../Views/edit_profile_form.php';
     }
 
@@ -151,10 +163,6 @@ class UserController
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
-        }
-
-        if (!isset($_SESSION['userId'])) {
-            header("Location: ./profile");
         }
         $errors = $this->ValidateProfile($_POST);
 

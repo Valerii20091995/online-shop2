@@ -5,7 +5,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 if (isset($_SESSION['userId'])) {
-    $pdo = new PDO("pgsql:host=db; port=5432; dbname=mydb;", 'valera', 'qwerty');
+    $pdo = new DataBase("pgsql:host=db; port=5432; dbname=mydb;", 'valera', 'qwerty');
     $stmt = $pdo->query('SELECT * FROM user_products WHERE user_id = ' . $_SESSION['userId']);
     $userProducts = $stmt->fetchAll();
     $products = [];

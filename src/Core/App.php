@@ -70,21 +70,27 @@ class App
     {
         $requestUri = $_SERVER['REQUEST_URI'];
         $requestMethod = $_SERVER['REQUEST_METHOD'];
-        if(isset($routes[$requestMethod])) {
+
+        if(isset($this->routes[$requestUri])) {
+            $routeMethods = $this->routes[$requestUri];
+            if (isset($routeMethods[$requestMethod])) {
+                $handler = $routeMethods[$requestMethod];
+                $class = $handler['class'];
+                $method = $handler['method'];
+
+                require_once "../Controllers/$class.php";
+                $controller = new $class();
+                $controller->$method();
+
+            } else {
+                echo "$requestMethod не поддерживается для $requestUri";
+            }
+        } else {
             http_response_code(404);
-            require_once './404.php';
-            exit();
+            require '../Views/404.php';
+
         }
-        $routeMethods = $this->routes[$requestUri];
-        if(!isset($routeMethods[$requestMethod])) {
-            http_response_code(405);
-            echo "HTTP метод $requestMethod не поддерживается";
-        }
-        $handler = $routeMethods[$requestMethod];
-        $class = $handler['class'];
-        $method = $handler['method'];
-        $controller = new $class();
-        $controller->$method();
+
     }
 }
 

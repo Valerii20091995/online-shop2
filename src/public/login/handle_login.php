@@ -20,7 +20,7 @@ if (empty($errors)) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $pdo = new PDO('pgsql:host=db; port=5432;dbname=mydb', 'valera', 'qwerty');
+    $pdo = new DataBase('pgsql:host=db; port=5432;dbname=mydb', 'valera', 'qwerty');
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
     $stmt->execute([':email' => $username]);
     $user = $stmt->fetch();

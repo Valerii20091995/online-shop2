@@ -23,7 +23,7 @@ function Validate(array $data): array
     if (isset($data['product_id'])) {
         $productId = (int)$data['product_id'];
 
-        $pdo = new PDO("pgsql:host=db; port=5432; dbname=mydb;", 'valera', 'qwerty');
+        $pdo = new DataBase("pgsql:host=db; port=5432; dbname=mydb;", 'valera', 'qwerty');
         $stmt = $pdo->prepare("SELECT * FROM products WHERE id = :productId");
         $stmt->execute(['productId' => $productId]);
         $data = $stmt->fetch();
@@ -40,7 +40,7 @@ function Validate(array $data): array
 }
 $errors = Validate($_POST);
 if (empty($errors)) {
-    $pdo = new PDO("pgsql:host=db; port=5432; dbname=mydb;", 'valera', 'qwerty');
+    $pdo = new DataBase("pgsql:host=db; port=5432; dbname=mydb;", 'valera', 'qwerty');
     $userId = $_SESSION['userId'];
     $productId = (int)$_POST['product_id'];
     $amount = (int)$_POST['amount'];

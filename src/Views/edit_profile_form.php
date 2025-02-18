@@ -1,17 +1,4 @@
-<?php
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
-if (isset($_SESSION['userId'])) {
-    $userId = $_SESSION['userId'];
-    $pdo = new PDO('pgsql:host=db; port=5432;dbname=mydb', 'valera', 'qwerty');
-    $stmt =$pdo->query('SELECT * FROM users WHERE id = ' . $userId);
-    $user =$stmt->fetch();
-} else {
-    header("Location: /login");
-    exit;
-}
-?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
