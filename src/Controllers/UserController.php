@@ -27,7 +27,6 @@ class UserController
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors['email'] = "Некорректный email";
             } else {
-                require_once '../Model/User.php';
                 $userModel = new User();
                 $user = $userModel->getByEmail($email);
 
@@ -67,7 +66,6 @@ class UserController
             $password = password_hash($password, PASSWORD_DEFAULT);
 
             //добавление  новых пользователей
-            require_once '../Model/User.php';
             $userModel = new User();
             $user = $userModel->addUser($name, $email, $password);
             $user = $userModel->getByEmail($email);
@@ -87,7 +85,6 @@ class UserController
         if (empty($errors)) {
             $email = $_POST['username'];
             $password = $_POST['password'];
-            require_once '../Model/User.php';
             $userModel = new User();
             $user = $userModel->getByEmail($email);
 
@@ -131,7 +128,6 @@ class UserController
         }
         if (isset($_SESSION['userId'])) {
             $userId = $_SESSION['userId'];
-            require_once '../Model/User.php';
             $userModel = new User();
             $user = $userModel->userVerification($userId);
             require_once '../Views/profile_form.php';
@@ -149,7 +145,6 @@ class UserController
         }
         if (isset($_SESSION['userId'])) {
             $userId = $_SESSION['userId'];
-            require_once '../Model/User.php';
             $userModel = new User();
             $user = $userModel->userVerification($userId);
         } else {
@@ -171,8 +166,6 @@ class UserController
             $userId = $_SESSION['userId'];
             $name = $_POST['name'];
             $email = $_POST['email'];
-
-            require_once '../Model/User.php';
             $userModel = new User();
             $user = $userModel->userVerification($userId);
 
@@ -207,7 +200,6 @@ class UserController
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors['email'] = "Некорректный email";
             } else {
-                require_once '../Model/User.php';
                 $userModel = new User();
                 $user = $userModel->getByEmail($email);
                 $userId = $_SESSION['userId'];
@@ -217,6 +209,14 @@ class UserController
             }
         }
         return $errors;
+    }
+    public function logout()
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+            session_destroy();
+            header("Location: ../login");
+        }
     }
 }
 

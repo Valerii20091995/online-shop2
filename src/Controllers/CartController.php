@@ -10,13 +10,11 @@ class CartController
         }
         $products = [];
         if (isset($_SESSION['userId'])) {
-            require_once '../Model/User_Product.php';
             $userProductModel = new User_Product();
             $userProducts = $userProductModel->getByUser_Product($_SESSION['userId']);
 
             foreach ($userProducts as $userProduct) {
                 $productId = $userProduct['product_id'];
-                require_once '../Model/Product.php';
                 $productModel = new Product();
                 $product = $productModel->getByProduct($productId);
                 $product['amount'] = $userProduct['amount'];

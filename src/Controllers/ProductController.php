@@ -13,7 +13,6 @@ class ProductController
         }
 //
         if (isset($_SESSION['userId'])) {
-            require_once '../Model/Product.php';
             $productModel = new Product();
             $products = $productModel->getByCatalog($_SESSION['userId']);
             require_once '../Views/catalog_form.php';
@@ -41,7 +40,6 @@ class ProductController
 
         $errors = $this->ValidateAddProduct($_POST);
         if (empty($errors)) {
-            require_once '../Model/User_Product.php';
             $userId = $_SESSION['userId'];
             $productId = (int)$_POST['product_id'];
             $amount = (int)$_POST['amount'];
@@ -78,7 +76,6 @@ class ProductController
         }
         if (isset($data['product_id'])) {
             $productId = (int)$data['product_id'];
-            require_once '../Model/Product.php';
             $productModel = new Product();
             $data = $productModel->getByProduct($productId);
             if ($data === false) {

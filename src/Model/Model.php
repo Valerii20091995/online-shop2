@@ -1,13 +1,10 @@
 <?php
-class DataBase
+class Model
 {
-    private static $PDO = null;
-    public static function getPDO():PDO
+    protected PDO $pdo;
+    public function __construct()
     {
-        if (self::$PDO === null) {
-            self::$PDO = new PDO("pgsql:host=db; port=5432; dbname=mydb;", 'valera', 'qwerty');
-        }
-        return self::$PDO;
+        $this->pdo = new PDO("pgsql:host=db; port=5432; dbname=mydb;", 'valera', 'qwerty');
     }
 
 }

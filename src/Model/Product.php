@@ -1,23 +1,17 @@
 <?php
-require_once '../Model/DataBase.php';
-class Product
-{
 
-    private PDO $PDO;
-    public function __construct()
-    {
-        $this->PDO = DataBase::getPDO();
-    }
+class Product extends Model
+{
     public function getByProduct($productId):array|false
     {
-        $stmt = $this->PDO->prepare("SELECT * FROM products WHERE id = :productId");
+        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id = :productId");
         $stmt->execute(['productId' => $productId]);
         $result = $stmt->fetch();
         return $result;
     }
     public function getByCatalog(int $userId):array|false
     {
-        $stmt = $this->PDO->query('SELECT * FROM products');
+        $stmt = $this->pdo->query('SELECT * FROM products');
         $result = $stmt->fetchAll();
         return $result;
 

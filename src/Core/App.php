@@ -64,6 +64,12 @@ class App
                 'method' => 'getCart',
             ],
         ],
+        '/logout' => [
+            'GET' => [
+                'class' => 'UserController',
+                'method' => 'logout',
+            ],
+        ],
 
     ];
     public function run()
