@@ -1,5 +1,6 @@
 <?php
-class User_Product extends Model
+namespace Model;
+class UserProduct extends Model
 {
     public function getByUserProducts(int $userId, int $productId):array|false
     {
@@ -25,11 +26,16 @@ class User_Product extends Model
 
 
     }
-    public function getByUser_Product(int $userId):array|false
+    public function getAllByUserId(int $userId):array|false
     {
         $stmt = $this->pdo->prepare("SELECT * FROM user_products WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $userId]);
         return $stmt->fetchAll();
+    }
+    public function deleteOrder(int $userId)
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM user_products WHERE user_id = :userId");
+        $stmt->execute(['userId' => $userId]);
     }
 
 }

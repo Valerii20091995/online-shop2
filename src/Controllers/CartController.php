@@ -1,7 +1,18 @@
 <?php
+namespace Controllers;
+use Model\Product;
+use Model\UserProduct;
 
 class CartController
 {
+    private UserProduct  $userProductModel;
+    private Product $productModel;
+
+    public function __construct()
+    {
+        $this->userProductModel = New UserProduct();
+        $this->productModel = new Product();
+    }
     public function getCart():array|false
     {
         if (session_status() == PHP_SESSION_NONE) {
@@ -10,13 +21,11 @@ class CartController
         }
         $products = [];
         if (isset($_SESSION['userId'])) {
-            $userProductModel = new User_Product();
-            $userProducts = $userProductModel->getByUser_Product($_SESSION['userId']);
+            $userProducts = $this->userProductModel->getAllByUserId($_SESSION['userId']);
 
             foreach ($userProducts as $userProduct) {
                 $productId = $userProduct['product_id'];
-                $productModel = new Product();
-                $product = $productModel->getByProduct($productId);
+                $product = $this->productModel->getOneById($productId);
                 $product['amount'] = $userProduct['amount'];
                 $products[] = $product;
             }
@@ -31,6 +40,7 @@ $products = $cart->getCart();
 <div class="container">
     <h3 class="page-title">Корзина с товаром</h3>
     <a href="/catalog" class="back-to-catalog">Вернуться в каталог</a>
+
     <div class="card-deck">
         <?php foreach ($products as $product): ?>
             <div class="card text-center">
@@ -52,6 +62,7 @@ $products = $cart->getCart();
             </div>
         <?php endforeach; ?>
     </div>
+    <a href="/order" class="page-title">Оформить заказ</a>
 </div>
 <style>
     body {

@@ -1,6 +1,7 @@
 <div class="container">
     <h3 class="page-title">Корзина с товаром</h3>
     <a href="/catalog" class="back-to-catalog">Вернуться в каталог</a>
+    <a href="/order" class="navbar-link">Оформить заказ</a>
     <div class="card-deck">
         <?php foreach ($products as $product): ?>
             <div class="card text-center">

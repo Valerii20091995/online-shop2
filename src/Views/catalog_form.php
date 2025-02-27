@@ -3,7 +3,9 @@
 
         <a href="/profile" class="navbar-link">Мой профиль</a>
         <a href="/cart" class="navbar-link">Корзина</a>
+        <a href="/orders" class="navbar-link">Мои заказы</a>
         <a href="/logout" class="navbar-link">выйти из профиля</a>
+
     </nav>
     <h3 class="catalog-title">Catalog</h3>
     <div class="card-deck">
