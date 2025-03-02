@@ -62,8 +62,8 @@ class OrderController
             $userProducts = $this->userProductModel->getAllByUserId($userId);
 
             foreach ($userProducts as $userProduct) {
-                $productId = $userProduct['product_id'];
-                $amount = $userProduct['amount'];
+                $productId = $userProduct->getProductId();
+                $amount = $userProduct->getAmount();
                 $this->orderProductModel->create($orderId, $productId, $amount);
             }
             $this->userProductModel->deleteOrder($userId);
@@ -83,102 +83,30 @@ class OrderController
             exit();
         }
         $userId = $_SESSION['userId'];
-//      теперь мы идем в бд и вытаскиваем в таблице заказов данные по сесии
         $userOrders = $this->orderModel->getAllByUserId($userId);
-//        $userOrders = [
-//            [
-//                'id'=> 1,
-//                'name' => 'tima',
-//                'phone' = '12322',
-//                'comment' = 'qq',
-//                'user_id' = 1,
-//                'address' = 'tima'
-//            ],
-//            [
-//                'id'=> 2,
-//                'name' => 'tima1',
-//                'phone' = '123221',
-//                'comment' = 'qq1',
-//                'user_id' = 1,
-//                'address' = 'tima1'
-//            ],
-//        ];
+
         $newUserOrders = [];
-//        через цикл вытаскиваем каждый заказ и отдельно
+
         foreach ($userOrders as $userOrder) {
-//            $userOrder = [
-//                'id'=> 1,
-//                'name' => 'tima',
-//                'phone' = '12322',
-//                'comment' = 'qq',
-//                'user_id' = 1,
-//                'address' = 'tima'
-//            ];
-//            далее идем в бд к таблице order_product чтобы получить данные используя индефикатор из таблицы Orders
-            $orderProducts = $this ->orderProductModel->getAllByOrderId($userOrder['id']);
-//            $orderProducts = [
-//              [
-//                  'id =>1 ',
-//                  'order_id => 1',
-//                  'product_id => 1',
-//                  'amount' => 100
-//              ],
-//                [
-//                   'id'=> 2,
-//                   'order_id => 1',
-//                   'product_id' => 2,
-//                   'amount' => 1000
-//                ],
-//
-//            ];
-//            теперь сохраняем копию этого массива нового хранилище для дальшейщих действий в $newOrderProducts
+
+            $orderProducts = $this ->orderProductModel->getAllByOrderId($userOrder->getId());
             $newOrderProducts = [];
-//            переменная сам для итоговой цены за заказ для покупателя
             $sum = 0;
+
             foreach ($orderProducts as $orderProduct) {
-//                $orderProduct =[
-//                    'id'=> 2,
-//                   'order_id => 1',
-//                   'product_id' => 2,
-//                   'amount' => 1000
-//                ];
-//                дальше идем в бд чтобы вытащить информацию о продукте
-                $product = $this->productModel->getOneById($orderProduct['product_id']);
-//                $product =[
-//                    'id' => 1,
-//                    'name' => 'moloko',
-//                    'price' => 100,
-//                    'image_url' =>'test.jpg',
-//                    'description' => 'vkys'
-//                ];
-//                здесь мы сохраняем значения $product v $orderProduct и таким образом наш массив добавилисб новые данные
 
-                $orderProduct['name'] = $product['name'];
-                $orderProduct['price'] = $product['price'];
-//                далее нужна итоговая сумма наших продуктов и добавляем новый ключ
-                $orderProduct['totalSum'] = $orderProduct['amount'] * $orderProduct['price'];
-//                $orderProduct = [
-//                    'id' => 2,
-//                    'order_id => 1',
-//                    'product_id' => 2,
-//                    'amount' => 1000,
-//                    'name' => 'moloko',
-//                    'price' => 100,
-//                    'totalSum' => 1000,
-//                ];
-//                теперь чтобы не потерять наш массив который выше указан мы пересохраняем его в новый массив чтобы потом использовать
+                $product = $this->productModel->getOneById($orderProduct->getProductId());
+                $orderProduct->setProduct($product);
+                $totalSum = $orderProduct->getAmount() * $product->getPrice();
+                $orderProduct->getProduct()->setTotalSum($totalSum);
+                $sum+= $totalSum;
                 $newOrderProducts[] = $orderProduct;
-//                теперь ниже достаем уже известную нам сумму итоговую за товар в количестве в тоталсам
-                $sum =$orderProduct['totalSum'] + $sum;
             }
-//            $newOrderProducts = $this->newOrderProducts($orderProducts);
-//            после цикла теперь итоговую сумму заказ сохраняем в новый ключ массива userorder
-            $userOrder['total'] = $sum;
-//            здесь облегчаем просто для себя сохраняем в ключ продуктс всю информацию о продукте чтобы потом к ней обратиться в разметке
-            $userOrder['products'] = $newOrderProducts;
+
+            $userOrder->setTotal($sum);
+
+            $userOrder->setProducts($newOrderProducts);
             $newUserOrders[] = $userOrder;
-
-
         }
         require_once '../Views/order_detail.php';
     }
@@ -188,26 +116,30 @@ class OrderController
     {
         $errors = [];
         if (isset($data['name'])) {
-            $name = $data['name'];
-            if (strlen($name) < 3) {
-                $errors['name'] = "Имя не может содержать меньше 3 символов";
+            if (strlen($data['name']) < 3) {
+                $errors['name'] = 'Имя пользователя должно быть больше 3 символов';
+            } elseif (!preg_match('/^[a-zA-Zа-яА-Я0-9_\-\.]+$/u', $data['name'])) {
+                $errors['name'] = "Имя пользователя может содержать только буквы, цифры, символы '_', '-', '.'";
             }
         } else {
             $errors['name'] = "Имя должно быть заполнено";
         }
 
         if (isset($data['address'])) {
-            $address = $data['address'];
-            if (strlen($address) < 5) {
-                $errors['address'] = "Неккоректный адрес(не меньше 5 символов)";
+            if (!preg_match('/^[\d\s\w\.,-]+$/u', $data['address'])) {
+                $errors['address'] = "Адрес содержит недопустимые символы";
+            }elseif (!preg_match('/[а-яА-ЯёЁ]+\s+\d+/', $data['address'])) {
+                $errors['address'] = "Укажите номер дома и улицу";
             }
         } else {
             $errors['address'] = "Address должен быть заполнен";
         }
         if (isset($data['phone'])) {
-            $phone = $data['phone'];
-            if (strlen($phone) < 12) {
-                $errors['phone'] = "Введите корректный номер телефона";
+            $cleanedPhone = preg_replace('/\D/', '', $data['phone']);
+            if(strlen($cleanedPhone) < 11) {
+                $errors['phone'] = 'Номер телефона не может быть меньше 11 символов';
+            }elseif (!preg_match('/^\+\d+$/', $data['phone'])) {
+                $errors['phone'] = "+ и цифры после";
             }
         } else {
             $errors['phone'] = "Поле Phone должно быть заполнено";
@@ -219,12 +151,12 @@ class OrderController
         $newOrderProducts = [];
         $sum = 0;
         foreach ($orderProducts as $orderProduct) {
-            $product = $this->productModel->getOneById($orderProduct['product_id']);
-            $orderProduct['name'] = $product['name'];
-            $orderProduct['price'] = $product['price'];
-            $orderProduct['totalSum'] = $orderProduct['amount'] * $orderProduct['price'];
+            $product = $this->productModel->getOneById($orderProduct->getProductId());
+            $orderProduct->setProduct($product);
+            $totalSum = $orderProduct->getAmount() * $product->getPrice();
+            $orderProduct->getProduct()->setTotalSum($totalSum);
             $newOrderProducts[] = $orderProduct;
-            $sum =$orderProduct['totalSum'] + $sum;
+
         }
         return $newOrderProducts;
     }
@@ -232,7 +164,7 @@ class OrderController
     {
         $total = 0;
         foreach ($newOrderProducts as $newOrderProduct) {
-           $total += $newOrderProduct['totalSum'];
+           $total += $newOrderProduct->getProduct()->getTotalSum();
         }
         return $total;
     }

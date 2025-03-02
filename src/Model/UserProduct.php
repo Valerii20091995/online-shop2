@@ -2,11 +2,32 @@
 namespace Model;
 class UserProduct extends Model
 {
-    public function getByUserProducts(int $userId, int $productId):array|false
+    private int $id;
+    private int $user_id;
+    private int $product_id;
+    private int $amount;
+    private Product $product;
+    private function createObject($product):self|null
+    {
+        if(!$product)
+        {
+            return null;
+        }
+        $object = new self();
+        $object->id = $product['id'];
+        $object->user_id = $product['user_id'];
+        $object->product_id = $product['product_id'];
+        $object->amount = $product['amount'];
+        return $object;
+    }
+    public function getByUserProducts(int $userId, int $productId):self|null
     {
         $stmt = $this->pdo->prepare("SELECT *FROM user_products WHERE product_id = :productId AND user_id = :userId");
         $stmt->execute(['productId' => $productId, 'userId' => $userId]);
-        return $stmt->fetch();
+        $product = $stmt->fetch();
+        if(!$product)
+            return null;
+        return $this->createObject($product);
 
 
     }
@@ -30,12 +51,51 @@ class UserProduct extends Model
     {
         $stmt = $this->pdo->prepare("SELECT * FROM user_products WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $userId]);
-        return $stmt->fetchAll();
+        $UserProducts = $stmt->fetchAll();
+        $newUserProducts =[];
+        foreach ($UserProducts as $UserProduct) {
+            $newUserProducts[] = $this->createObject($UserProduct);
+        }
+        return $newUserProducts;
+
     }
     public function deleteOrder(int $userId)
     {
         $stmt = $this->pdo->prepare("DELETE FROM user_products WHERE user_id = :userId");
         $stmt->execute(['userId' => $userId]);
     }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->user_id;
+    }
+
+    public function getProductId(): int
+    {
+        return $this->product_id;
+    }
+
+    public function getAmount(): int
+    {
+        return $this->amount;
+    }
+
+    public function getProduct(): Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(Product $product): void
+    {
+        $this->product = $product;
+    }
+
+
+
 
 }

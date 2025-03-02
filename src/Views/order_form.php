@@ -96,13 +96,13 @@
         </div>
         <div class="container">
             <?php foreach ($newOrderProducts as $newOrderProduct): ?>
-            <h2><?php echo $newOrderProduct['name']?></h2>
+            <h2><?php echo $newOrderProduct->getProduct()->getName()?></h2>
             <label for="amount">Количество:</label>
-            <input type="number" id="amount" name="amount" min="1" value=<?php echo $newOrderProduct['amount']?> required>
+            <input type="number" id="amount" name="amount" min="1" value=<?php echo $newOrderProduct->getAmount()?> required>
             <label for="amount">Стоимость за 1 шт:</label>
-            <div class="price">₽ <?php echo $newOrderProduct['price']?></div>
+            <div class="price">₽ <?php echo $newOrderProduct->getProduct()->getPrice()?></div>
             <label for="totalProduct">Итого:</label>
-            <div class="price">₽ <?php echo $newOrderProduct['totalSum'];?></div>
+            <div class="price">₽ <?php echo $newOrderProduct->getProduct()->getTotalSum();?></div>
             <?php endforeach; ?>
             <h2><label for="totalOrder">Заказ на сумму:</label></h2>
             <div class="price">₽ <?php echo $total;?></div>

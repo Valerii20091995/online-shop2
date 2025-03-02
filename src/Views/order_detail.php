@@ -85,11 +85,11 @@
 <div class="order-container">
     <?php foreach ($newUserOrders as $newUserOrder): ?>
         <div class="order-card">
-            <h2>Заказ № <?php echo $newUserOrder['id']?></h2>
-            <p><?php echo $newUserOrder['name']?></p>
-            <p><?php echo $newUserOrder['phone']?></p>
-            <p><?php echo $newUserOrder['comment']?></p>
-            <p><?php echo $newUserOrder['address'];?></p>
+            <h2>Заказ № <?php echo $newUserOrder->getId()?></h2>
+            <p><?php echo $newUserOrder->getName()?></p>
+            <p><?php echo $newUserOrder->getPhone()?></p>
+            <p><?php echo $newUserOrder->getComment()?></p>
+            <p><?php echo $newUserOrder->getAddress();?></p>
             <table>
                 <thead>
                 <tr>
@@ -100,17 +100,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($newUserOrder['products'] as $newOrderProduct): ?>
+                <?php foreach ($newUserOrder->getProducts() as $newOrderProduct): ?>
                     <tr>
-                        <td><?php echo $newOrderProduct['name']?></td>
-                        <td><?php echo $newOrderProduct['amount']?></td>
-                        <td><?php echo $newOrderProduct['price']?></td>
-                        <td><?php echo $newOrderProduct['totalSum']?></td>
+                        <td><?php echo $newOrderProduct->getProduct()->getName()?></td>
+                        <td><?php echo $newOrderProduct->getAmount()?></td>
+                        <td><?php echo $newOrderProduct->getProduct()->getPrice()?></td>
+                        <td><?php echo $newOrderProduct->getProduct()->getTotalSum()?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
-            <p>Сумма заказа <?php echo $newUserOrder['total'];?></p>
+            <p>Сумма заказа <?php echo $newUserOrder->getTotal();?></p>
         </div>
     <?php endforeach; ?>
 </div>

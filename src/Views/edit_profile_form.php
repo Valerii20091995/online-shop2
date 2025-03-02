@@ -59,14 +59,14 @@
             <?php if (isset($errors['name'])):  ?>
                 <label style="color: red"><?php echo $errors['name'];?></label>
             <?php endif; ?>
-            <input type="text" id="name" name="name" value="<?php echo $user['name'];?>" >
+            <input type="text" id="name" name="name" value="<?php echo $user->getName();?>" >
         </div>
         <div class="form-group">
             <label for="email">Email:</label>
             <?php if (isset($errors['email'])):  ?>
                 <label style="color: red"><?php echo $errors['email'];?></label>
             <?php endif; ?>
-            <input type="email" id="email" name="email" value="<?php echo $user['email']; ?>" >
+            <input type="email" id="email" name="email" value="<?php echo $user->getEmail(); ?>" >
         </div>
         <button type="submit">Сохранить изменения</button>
     </form>

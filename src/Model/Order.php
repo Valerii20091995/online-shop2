@@ -4,6 +4,15 @@ namespace Model;
 
 class Order extends Model
 {
+    private int $id;
+    private string $name;
+    private string $phone;
+    private string $comment;
+    private string $address;
+    private int $user_id;
+    private Product $product;
+    private int $total;
+    private array $products =[];
     public function addOrder(string $name, string $phone, string $comment, string $address, int $userId):int|false
     {
         $stmt = $this->pdo->prepare(
@@ -24,8 +33,92 @@ class Order extends Model
     {
         $stmt = $this->pdo->prepare("SELECT * FROM orders WHERE user_id = :userId");
         $stmt->execute([':userId' => $userId]);
-        return $stmt->fetchAll();
+         $userOrders = $stmt->fetchAll();
+         $newUserOrders = [];
+         foreach ($userOrders as $userOrder) {
+             $newUserOrders[] = $this->createObject($userOrder);
+         }
+         return $newUserOrders;
+
     }
+    private function createObject(array $userOrder):self|null
+    {
+        if(!$userOrder) {
+            return null;
+        }
+        $object = new self();
+        $object->id = $userOrder['id'];
+        $object->name = $userOrder['name'];
+        $object->phone = $userOrder['phone'];
+        $object->comment = $userOrder['comment'];
+        $object->address = $userOrder['address'];
+        $object->user_id = $userOrder['user_id'];
+        return $object;
+
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getPhone(): string
+    {
+        return $this->phone;
+    }
+
+    public function getComment(): string
+    {
+        return $this->comment;
+    }
+
+    public function getAddress(): string
+    {
+        return $this->address;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->user_id;
+    }
+
+    public function getProduct(): Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(Product $product): void
+    {
+        $this->product = $product;
+    }
+
+    public function getTotal(): int
+    {
+        return $this->total;
+    }
+
+    public function setTotal(int $total): void
+    {
+        $this->total = $total;
+    }
+
+    public function getProducts(): array
+    {
+        return $this->products;
+    }
+
+    public function setProducts(array $products): void
+    {
+        $this->products = $products;
+    }
+
+
+
 
 
 

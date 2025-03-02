@@ -56,13 +56,13 @@ class ProductController
             $amount = (int)$_POST['amount'];
 
             $products = $this->userProductModel->getByUserProducts($userId, $productId);
-            if ($products === false) {
+            if ($products === null) {
                 $this->userProductModel->addProductByUser($userId,$productId, $amount);
-                header('Location: /cart');
+                header('Location: /catalog');
             }else {
-                $newAmount = $amount + $products['amount'];
+                $newAmount = $amount + $products->getAmount();
                 $upProduct = $this->userProductModel->updateProductByUser($newAmount, $productId, $userId);
-                header('Location: /cart');
+                header('Location: /catalog');
             }
 
         }

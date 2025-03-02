@@ -15,19 +15,19 @@
                     <div class="card-header">
                         <span class="badge badge-success">Hit!</span>
                     </div>
-                    <img class="card-img-top" src="<?php echo $product['image_url']; ?>" alt="Card image">
+                    <img class="card-img-top" src="<?php echo $product->getimageUrl(); ?>" alt="Card image">
                     <div class="card-body">
-                        <p class="product-name"><?php echo $product['name']; ?></p>
-                        <p class="product-description"><?php echo $product['description']; ?></p>
+                        <p class="product-name"><?php echo $product->getName(); ?></p>
+                        <p class="product-description"><?php echo $product->getDescription(); ?></p>
                     </div>
                     <div class="card-footer">
-                        <p class="price"><?php echo $product['price'] . "р"; ?></p>
+                        <p class="price"><?php echo $product->getPrice() . "р"; ?></p>
                     </div>
                 </a>
             </div>
 
             <form action="/add-product" method="POST" class="product-form">
-                <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>" id="product_id" required>
+                <input type="hidden" name="product_id" value="<?php echo $product->getId(); ?>" id="product_id" required>
                 <div class="form-group">
                     <label for="amount">Amount</label>
                     <?php if (isset($errors['amount'])): ?>

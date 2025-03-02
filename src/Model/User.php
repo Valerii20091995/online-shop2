@@ -2,12 +2,32 @@
 namespace Model;
 class User extends Model
 {
-    public function getByEmail(string $email):array|false
+    private int $id;
+    private string $name;
+    private string $email;
+    private string $password;
+    public function createObj(array $user):self|null
+    {
+        if (!$user) {
+            return null;
+        }
+        $obj = new self();
+        $obj->id = $user['id'];
+        $obj->name = $user['name'];
+        $obj->email = $user['email'];
+        $obj->password = $user['password'];
+        return $obj;
+    }
+
+    public function getByEmail(string $email):self|null
     {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->execute([':email' => $email]);
-        $result = $stmt->fetch();
-        return $result;
+        $user = $stmt->fetch();
+        if (!$user) {
+            return null;
+        }
+        return $this->createObj($user);
     }
     public function addUser(string $name, string $email, string $password):array|false
     {
@@ -16,11 +36,11 @@ class User extends Model
         $result = $stmt->fetch();
         return $result;
     }
-    public function userVerification(int $userId):array|false
+    public function userVerification(int $userId):self|null
     {
         $stmt = $this->pdo->query('SELECT * FROM users WHERE id = ' . $_SESSION['userId']);
-        $result = $stmt->fetch();
-        return $result;
+        $user = $stmt->fetch();
+        return $this->createObj($user);
     }
     public function updateEmailByID(string $email, int $userId)
     {
@@ -36,6 +56,27 @@ class User extends Model
         $result = $stmt->fetch();
         return $result;
     }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
 
 
 }

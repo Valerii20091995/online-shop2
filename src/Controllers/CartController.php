@@ -24,10 +24,10 @@ class CartController
             $userProducts = $this->userProductModel->getAllByUserId($_SESSION['userId']);
 
             foreach ($userProducts as $userProduct) {
-                $productId = $userProduct['product_id'];
+                $productId = $userProduct->getProductId();
                 $product = $this->productModel->getOneById($productId);
-                $product['amount'] = $userProduct['amount'];
-                $products[] = $product;
+                $userProduct->setProduct($product);
+                $products[] = $userProduct;
             }
         }
          return $products;
@@ -49,13 +49,13 @@ $products = $cart->getCart();
                         <span class="badge badge-success">Hit!</span>
                     </div>
                     <div class="card-body">
-                        <img class="card-img-top" src="<?php echo $product['image_url']; ?>" alt="Card image">
-                        <p class="card-text product-name"><?php echo $product['name']; ?></p>
-                        <p class="card-text description"><?php echo $product['description']; ?></p>
+                        <img class="card-img-top" src="<?php echo $product->getProduct()->getImageUrl(); ?>" alt="Card image">
+                        <p class="card-text product-name"><?php echo $product->getProduct()->getName(); ?></p>
+                        <p class="card-text description"><?php echo $product->getProduct()->getDescription(); ?></p>
                         <div class="card-footer">
-                            <p class="price"><?php echo "Цена: " . $product['price'] . "р"; ?></p>
-                            <p class="amount"><?php echo "Количество: " . $product['amount'] . "шт"; ?></p>
-                            <p class="total"><?php echo "Итого: " . $product['amount'] * $product['price'] . "р"; ?></p>
+                            <p class="price"><?php echo "Цена: " . $product->getProduct()->getPrice() . "р"; ?></p>
+                            <p class="amount"><?php echo "Количество: " . $product->getAmount() . "шт"; ?></p>
+                            <p class="total"><?php echo "Итого: " . $product->getAmount() * $product->getProduct()->getPrice() . "р"; ?></p>
                         </div>
                     </div>
                 </a>

@@ -38,7 +38,7 @@ class UserController
             } else {
                 $user = $this->userModel->getByEmail($email);
 
-                if ($user !== false) {
+                if ($user !== null) {
                     $errors['email'] = "Этот Email уже зарегестрирован!";
                 }
             }
@@ -94,16 +94,16 @@ class UserController
             $password = $_POST['password'];
             $user = $this->userModel->getByEmail($email);
 
-            if ($user === false) {
+            if ($user === null) {
                 $errors['username'] = "Логин или пароль указаны неверно!";
             } else {
-                $passwordDB = $user['password'];
+                $passwordDB = $user->getPassword();
 
                 if (password_verify($password, $passwordDB)) {
 
                     //вход через сессии
                     session_start();
-                    $_SESSION['userId'] = $user['id'];
+                    $_SESSION['userId'] = $user->getId();
                     header("Location: /catalog");
                 } else {
                     $errors['username'] = "Логин или пароль указаны неверно!";
@@ -173,12 +173,12 @@ class UserController
             $user = $this->userModel->userVerification($userId);
 
 
-            if ($user['name'] !== $name) {
+            if ($user->getName() !== $name) {
 
                 $this->userModel->updateNamedByID($name, $userId);
             }
 
-            if ($user['email'] !== $email) {
+            if ($user->getEmail() !== $email) {
                 $this->userModel->updateEmailByID($email, $userId);
             }
             header("Location: ./profile");
@@ -205,7 +205,7 @@ class UserController
             } else {
                 $user = $this->userModel->getByEmail($email);
                 $userId = $_SESSION['userId'];
-                if ($user && $user['email'] === $email && $user['id'] !== $userId) {
+                if ($user && $user->getEmail() === $email && $user->getId() !== $userId) {
                     $errors['email'] = "Этот Email уже зарегистрирован!";
                 }
             }

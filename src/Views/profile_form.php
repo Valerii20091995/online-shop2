@@ -43,8 +43,8 @@
 <form action="/profile-change" method="POST">
     <div class="profile-container">
         <h1>Мой Профиль</h1>
-        <p>Имя:  <?php echo $user['name']; ?> </p>
-        <p>Email: <?php echo $user['email']; ?> </p>
+        <p>Имя:  <?php echo $user->getName(); ?> </p>
+        <p>Email: <?php echo $user->getEmail(); ?> </p>
         <a href="/profile-change" class="button">Изменить данные профиля</a>
 
         <a href="/catalog" class="button">Вернуться в каталог</a>
