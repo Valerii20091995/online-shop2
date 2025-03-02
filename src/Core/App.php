@@ -1,12 +1,5 @@
 <?php
 namespace Core;
-use Controllers\CartController;
-use Controllers\OrderController;
-use Controllers\ProductController;
-use Controllers\UserController;
-
-
-
 class App
 {
     private array $routes = [];
@@ -34,11 +27,18 @@ class App
         }
 
     }
-    public function addRoute(string $route, string $routeMethod,string $className, string $method)
+    public function get(string $route,string $className, string $method)
     {
-        $this->routes[$route][$routeMethod] = [
-              'class' =>  $className,
-                'method' => $method,
+        $this->routes[$route]['GET'] = [
+            'class' =>  $className,
+            'method' => $method,
+        ];
+    }
+    public function post(string $route,string $className, string $method)
+    {
+        $this->routes[$route]['POST']= [
+            'class' =>  $className,
+            'method' => $method,
         ];
     }
 }

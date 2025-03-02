@@ -41,23 +41,23 @@ class Product extends Model
 
     }
 
-    public function getId()
+    public function getId():int
     {
         return $this->id;
     }
-    public function getName()
+    public function getName():string
     {
         return $this->name;
     }
-    public function getDescription()
+    public function getDescription():string
     {
         return $this->description;
     }
-    public function getPrice()
+    public function getPrice():int
     {
         return $this->price;
     }
-    public function getImageUrl()
+    public function getImageUrl():string
     {
         return $this->image_url;
     }
