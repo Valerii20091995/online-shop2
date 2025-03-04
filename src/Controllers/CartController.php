@@ -2,26 +2,25 @@
 namespace Controllers;
 use Model\Product;
 use Model\UserProduct;
+use Service\authService;
 
-class CartController
+class CartController extends BaseController
 {
     private UserProduct  $userProductModel;
     private Product $productModel;
 
     public function __construct()
     {
+        parent::__construct();
         $this->userProductModel = New UserProduct();
         $this->productModel = new Product();
     }
     public function getCart():array|false
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-
-        }
         $products = [];
-        if (isset($_SESSION['userId'])) {
-            $userProducts = $this->userProductModel->getAllByUserId($_SESSION['userId']);
+        if ($this->authService->check()) {
+            $user = $this->authService->getCurrentUser();
+            $userProducts = $this->userProductModel->getAllByUserId($user->getId());
 
             foreach ($userProducts as $userProduct) {
                 $productId = $userProduct->getProductId();
@@ -32,7 +31,87 @@ class CartController
         }
          return $products;
     }
+//    функция которая увеличивает количество товара на 1 единицу
+    public function addInCart($productId)
+    {
+        $this->authService->startSession();
+//        если товар уже есть каком то количество в заказе то увеличиваем инкрементом на 1 единицу
+        if (isset($_SESSION['cart'][$productId])) {
+            $_SESSION['cart'][$productId] ++;
+        } else {
+//            если товара изначально не было в заказе то добавляем 1 единицу
+            $_SESSION['cart'][$productId] = 1;
+        }
+        header('Location: /catalog');
+        exit;
+    }
+//    функция для уменьшения либо же удаления товара из корзины
+    public  function decreaseInCart($productId)
+    {
+        $this->authService->startSession();
+//        если товар вообще уже ест ьв заказе?
+        if (isset($_SESSION['cart'][$productId])) {
+//            если товара больше 1 единицы то уменьшаем на 1
+            if ($_SESSION['cart'][$productId] > 1) {
+                $_SESSION['cart'][$productId] --;
+            } else {
+                unset($_SESSION['cart'][$productId]);
+            }
+        }
+        header('Location: /catalog');
+        exit;
+    }
+    public function getAmountInCart($productId)
+    {
+        $this->authService->startSession();
+
+        // Если товар в корзине
+        if (isset($_SESSION['cart'][$productId])) {
+            return $_SESSION['cart'][$productId];
+        }
+
+        return 0; // Если товара нет в корзине
+    }
+    public function decreaseProduct()
+    {
+        if (!$this->authService->check()) {
+            header('Location: /login');
+            exit();
+        }
+        if (empty($errors)) {
+            $user = $this->authService->getCurrentUser();
+            $productId = (int)$_POST['product_id'];
+
+            $products = $this->userProductModel->getByUserProducts($user->getId(), $productId);
+            if ($products === null) {
+                header('Location: /catalog');
+                exit();
+            }else {
+                $amountInCart = $products->getAmount();
+                if ($amountInCart - 1) {
+                    $this->userProductModel->updateProductByUser($amountInCart, $productId, $user->getId());
+                } else {
+                    $this->userProductModel->removeProductByUser($user->getId(), $productId, $amountInCart);
+                }
+
+            }
+            header('Location: /catalog');
+            exit();
+
+        }
+        require_once '../Views/add_product_form.php';
+
+
+    }
+    public function removeProductByUser($productId)
+    {
+        $this->authService->startSession();
+
+    }
+
+
 }
+
 $cart = new cartController();
 $products = $cart->getCart();
 ?>

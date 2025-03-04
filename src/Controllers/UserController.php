@@ -2,13 +2,15 @@
 namespace Controllers;
 
 use Model\User;
+use Service\authService;
 
-class UserController
+class UserController extends BaseController
 {
     private User $userModel;
     public function __construct()
     {
         $this->userModel = new User();
+        parent::__construct();
     }
     public function getRegistrate()
     {
@@ -85,29 +87,16 @@ class UserController
     {
         require_once '../Views/login_form.php';
     }
-
     public function login()
     {
         $errors = $this->ValidateLogin($_POST);
         if (empty($errors)) {
-            $email = $_POST['username'];
-            $password = $_POST['password'];
-            $user = $this->userModel->getByEmail($email);
-
-            if ($user === null) {
-                $errors['username'] = "Логин или пароль указаны неверно!";
+            $result = $this->authService->auth($_POST['email'], $_POST['password']);
+            if ($result === true) {
+                header("Location: /catalog");
+                exit();
             } else {
-                $passwordDB = $user->getPassword();
-
-                if (password_verify($password, $passwordDB)) {
-
-                    //вход через сессии
-                    session_start();
-                    $_SESSION['userId'] = $user->getId();
-                    header("Location: /catalog");
-                } else {
-                    $errors['username'] = "Логин или пароль указаны неверно!";
-                }
+                $errors['autorization'] = "Логин или пароль указаны неверно!";
             }
         }
         require_once '../Views/login_form.php';
@@ -117,8 +106,8 @@ class UserController
     {
         $errors = [];
         // проверка наличия переменных
-        if (!isset($date['username'])) {
-            $errors['username'] = "Поле Username обязательно для заполнения!";
+        if (!isset($date['email'])) {
+            $errors['email'] = "Поле Username обязательно для заполнения!";
         }
         if (!isset($date['password'])) {
             $errors['password'] = "Поле Password обязательно для заполнения!";
@@ -129,12 +118,8 @@ class UserController
     // Выдача профиля
     public function profile()
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-        if (isset($_SESSION['userId'])) {
-            $userId = $_SESSION['userId'];
-            $user = $this->userModel->userVerification($userId);
+        if ($this->authService->check()) {
+            $user = $this->authService->getCurrentUser();
             require_once '../Views/profile_form.php';
         } else {
             header("Location: /login");
@@ -145,12 +130,8 @@ class UserController
     // Изменения профиля
     public function getEditProfile()
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-        if (isset($_SESSION['userId'])) {
-            $userId = $_SESSION['userId'];
-            $user = $this->userModel->userVerification($userId);
+        if ($this->authService->check()) {
+            $user = $this->authService->getCurrentUser();
         } else {
             header("Location: /login");
             exit;
@@ -160,9 +141,7 @@ class UserController
 
     public function editProfile()
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
+        $this->authService->startSession();
         $errors = $this->ValidateProfile($_POST);
 
         if (empty($errors)) {
@@ -214,11 +193,8 @@ class UserController
     }
     public function logout()
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-            session_destroy();
-            header("Location: ../login");
-        }
+        $this->authService->logout();
+        header("Location: ../login");
     }
 }
 

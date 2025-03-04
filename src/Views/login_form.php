@@ -1,13 +1,13 @@
 <div class="wrapper">
     <form class="form-signin" action="./login" method="POST">
         <h2 class="form-signin-heading">Please login</h2>
-        <input type="text" class="form-control" name="username" placeholder="Email Address" required="" autofocus="" />
-        <?php if (isset($errors['username'])):  ?>
-            <label style="color: red"><?php echo $errors['username'];?></label>
+        <input type="text" class="form-control" name="email" placeholder="Email Address" required="" autofocus="" />
+        <?php if (isset($errors['autorization'])):  ?>
+            <label style="color: red"><?php echo $errors['autorization'];?></label>
         <?php endif; ?>
         <input type="password" class="form-control" name="password" placeholder="Password" required=""/>
-        <?php if (isset($errors['password'])):  ?>
-            <label style="color: red"><?php echo $errors['password'];?></label>
+        <?php if (isset($errors['autorization'])):  ?>
+            <label style="color: red"><?php echo $errors['autorization'];?></label>
         <?php endif; ?>
         <label class="checkbox">
             <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Remember me

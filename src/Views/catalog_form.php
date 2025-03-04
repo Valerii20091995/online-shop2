@@ -1,3 +1,4 @@
+
 <div class="container">
     <nav class="navbar">
 
@@ -10,6 +11,9 @@
     <h3 class="catalog-title">Catalog</h3>
     <div class="card-deck">
         <?php foreach ($products as $product): ?>
+        <?php $productId = $product->getId();
+        $disabled = isset($_SESSION['cart'][$productId]) && $_SESSION['cart'][$productId] > 1 ? '' : 'disabled';
+            ?>
             <div class="card text-center">
                 <a href="#">
                     <div class="card-header">
@@ -28,19 +32,21 @@
 
             <form action="/add-product" method="POST" class="product-form">
                 <input type="hidden" name="product_id" value="<?php echo $product->getId(); ?>" id="product_id" required>
-                <div class="form-group">
-                    <label for="amount">Amount</label>
-                    <?php if (isset($errors['amount'])): ?>
-                        <p class="error-message"><?php echo $errors['amount']; ?></p>
-                    <?php endif; ?>
-                    <input type="number" name="amount" id="amount" placeholder="Enter amount" required>
+                <input type="hidden" name="amount" value="1">
+                <button type="submit" class="add-product-btn">+</button>
+                <div class="product-quantity">
+                    <?php
+                    echo $amountInCart. "шт";
+                    ?>
                 </div>
-                <button type="submit" class="add-product-btn">Add product</button>
+            </form>
+            <form action="/decrease-product" method="POST" class="product-form">
+                <input type="hidden" name="product_id" value="<?php echo $product->getId(); ?>" id="product_id" required>
+                <button type="submit"  class="remove-product-btn">-</button>
             </form>
         <?php endforeach; ?>
     </div>
 </div>
-
 <style>
     body {
         font-family: 'Arial', sans-serif;

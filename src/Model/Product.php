@@ -8,6 +8,7 @@ class Product extends Model
     private int $price;
     private string $image_url;
     private $totalSum;
+    private $amountInCart;
     private function createObject(array $product):self|null
     {
         if(!$product) {
@@ -69,4 +70,13 @@ class Product extends Model
     {
         $this->totalSum = $totalSum;
     }
+    public function getAmountInCart()
+    {
+        return $this->amountInCart;
+    }
+    public function setAmountInCart($amountInCart): void
+    {
+        $this->amountInCart = $amountInCart;
+    }
+
 }

@@ -2,13 +2,15 @@
 namespace Controllers;
 use Model\Product;
 use Model\UserProduct;
+use Service\authService;
 
-class ProductController
+class ProductController extends BaseController
 {
     private $productModel;
     private $userProductModel;
     public function __construct()
     {
+        parent::__construct();
         $this->productModel = new Product();
         $this->userProductModel = new UserProduct();
     }
@@ -20,12 +22,14 @@ class ProductController
 
     public function Catalog()
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-//
-        if (isset($_SESSION['userId'])) {
-            $products = $this->productModel->getByCatalog($_SESSION['userId']);
+        if ($this->authService->check()) {
+            $user = $this->authService->getCurrentUser();
+            $products = $this->productModel->getByCatalog($user->getId());
+            foreach ($products as $product) {
+                $productId = $product->getId();
+                $amountInCart = isset($_SESSION['cart'][$productId]) ? $_SESSION['cart'][$productId] : 0;
+                $product->setAmountInCart($amountInCart);
+            }
             require_once '../Views/catalog_form.php';
         } else {
             header("Location: ./login");
@@ -40,11 +44,8 @@ class ProductController
 
     public function addProduct()
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
 
-        if (!isset($_SESSION['userId'])) {
+        if (!$this->authService->check()) {
             header('Location: /login');
             exit();
         }
@@ -58,19 +59,20 @@ class ProductController
             $products = $this->userProductModel->getByUserProducts($userId, $productId);
             if ($products === null) {
                 $this->userProductModel->addProductByUser($userId,$productId, $amount);
-                header('Location: /catalog');
+//                header('Location: /catalog');
             }else {
                 $newAmount = $amount + $products->getAmount();
-                $upProduct = $this->userProductModel->updateProductByUser($newAmount, $productId, $userId);
-                header('Location: /catalog');
+                $this->userProductModel->updateProductByUser($newAmount, $productId, $userId);
+
             }
+            header('Location: /catalog');
+            exit();
 
         }
         require_once '../Views/add_product_form.php';
 
 
     }
-
     private function ValidateAddProduct(array $data): array
     {
         $errors = [];

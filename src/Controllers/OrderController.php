@@ -4,9 +4,10 @@ use Model\Order;
 use Model\OrderProduct;
 use Model\Product;
 use Model\UserProduct;
+use Service\AuthService;
 
 
-class OrderController
+class OrderController extends BaseController
 {
     private  Product $productModel;
     private OrderProduct $orderProductModel;
@@ -15,6 +16,7 @@ class OrderController
 
     public function __construct()
     {
+        parent::__construct();
         $this->userProductModel = new UserProduct();
         $this->productModel = new Product();
         $this->orderProductModel = new OrderProduct();
@@ -22,13 +24,9 @@ class OrderController
     }
     public function getCheckOutForm()
     {
-        if(session_status() !== PHP_SESSION_ACTIVE)
-        {
-            session_start();
-        }
-        if (isset($_SESSION['userId'])) {
-            $userId = $_SESSION['userId'];
-            $orderProducts = $this->userProductModel->getAllByUserId($userId);
+        if ($this->authService->check()) {
+            $user = $this->authService->getCurrentUser();
+            $orderProducts = $this->userProductModel->getAllByUserId($user->getId());
             if (empty($orderProducts)) {
                 header('Location: /catalog');
                 exit();
@@ -43,10 +41,7 @@ class OrderController
     }
     public function handleCheckOut()
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-        if (!isset($_SESSION['userId'])) {
+        if (!$this->authService->check()) {
             header("Location: /login");
             exit();
         }
@@ -75,15 +70,12 @@ class OrderController
     }
     public function getAllOrders(): void
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-        if (!isset($_SESSION['userId'])) {
+        if (!$this->authService->check()) {
             header("Location: /login");
             exit();
         }
-        $userId = $_SESSION['userId'];
-        $userOrders = $this->orderModel->getAllByUserId($userId);
+        $user = $this->authService->getCurrentUser();
+        $userOrders = $this->orderModel->getAllByUserId($user->getId());
 
         $newUserOrders = [];
 
