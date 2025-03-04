@@ -23,12 +23,29 @@ class ProductController extends BaseController
     public function Catalog()
     {
         if ($this->authService->check()) {
+
             $user = $this->authService->getCurrentUser();
+            $userProducts = $this->userProductModel->getAllByUserId($user->getId());
             $products = $this->productModel->getByCatalog($user->getId());
+            $newProducts = [];
+
             foreach ($products as $product) {
-                $productId = $product->getId();
-                $amountInCart = isset($_SESSION['cart'][$productId]) ? $_SESSION['cart'][$productId] : 0;
-                $product->setAmountInCart($amountInCart);
+//                смотрим есть ли товар в корзине? используя false and true
+                $issetProduct = false;
+                foreach ($userProducts as $userProduct) {
+                    if ($userProduct->getProductId() === $product->getId()) {
+                        $userProduct->setProduct($product);
+                        $newProducts[] = $userProduct;
+                        $issetProduct = true;
+                        break;
+                    }
+                }
+                if (!$issetProduct) {
+                    $userProduct = new UserProduct();
+                    $userProduct->setProduct($product);
+                    $userProduct->setAmount(0);
+                    $newProducts[] = $userProduct;
+                }
             }
             require_once '../Views/catalog_form.php';
         } else {
@@ -37,10 +54,10 @@ class ProductController extends BaseController
     }
 
     // Добавление продукта
-    public function getAddProduct()
-    {
-        require_once '../Views/add_product_form.php';
-    }
+//    public function getAddProduct()
+//    {
+//        require_once '../Views/add_product_form.php';
+//    }
 
     public function addProduct()
     {
@@ -54,14 +71,17 @@ class ProductController extends BaseController
         if (empty($errors)) {
             $userId = $_SESSION['userId'];
             $productId = (int)$_POST['product_id'];
-            $amount = (int)$_POST['amount'];
-
+//            $amount = (int)$_POST['amount'];
+//            добавляем 1 ровно 1 штуку товара
+            $amount = 1;
+//проверяем есть ли товар в корзине
             $products = $this->userProductModel->getByUserProducts($userId, $productId);
+//            если нету товара то +1 штука продукта
             if ($products === null) {
                 $this->userProductModel->addProductByUser($userId,$productId, $amount);
-//                header('Location: /catalog');
             }else {
-                $newAmount = $amount + $products->getAmount();
+//                есть есть продукт в корзине то +1 штука продукта
+                $newAmount = 1 + $products->getAmount();
                 $this->userProductModel->updateProductByUser($newAmount, $productId, $userId);
 
             }
@@ -69,9 +89,32 @@ class ProductController extends BaseController
             exit();
 
         }
-        require_once '../Views/add_product_form.php';
+//        require_once '../Views/add_product_form.php';
 
 
+    }
+    public function decreaseProduct()
+    {
+        if (!$this->authService->check()) {
+            header('Location: /login');
+            exit();
+        }
+        $userId = $_SESSION['userId'];
+        $productId = (int)$_POST['product_id'];
+
+        $products = $this->userProductModel->getByUserProducts($userId, $productId);
+        if ($products !== null) {
+            $amount = $products->getAmount();
+            if ($amount > 1) {
+                $newAmount = $amount - 1;
+                $this->userProductModel->updateProductByUser($newAmount, $productId, $userId);
+            } else {
+                $this->userProductModel->removeProductInCart($productId, $userId);
+            }
+            header('Location: /catalog');
+            exit();
+
+        }
     }
     private function ValidateAddProduct(array $data): array
     {

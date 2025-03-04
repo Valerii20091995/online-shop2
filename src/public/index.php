@@ -27,8 +27,7 @@ $app->get('/logout', UserController::class, 'logout');
 $app->get('/order', OrderController::class, 'getCheckOutForm');
 $app->post('/order', OrderController::class, 'handleCheckOut');
 $app->get('/orders', OrderController::class, 'getAllOrders');
-$app->post('/catalog', CartController::class, 'addToCart');
-$app->post('/decrease-product', CartController::class, 'decreaseProduct');
+$app->post('/decrease-product', ProductController::class, 'decreaseProduct');
 
 
 $app->run();

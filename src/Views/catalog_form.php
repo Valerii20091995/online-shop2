@@ -1,4 +1,3 @@
-
 <div class="container">
     <nav class="navbar">
 
@@ -10,38 +9,34 @@
     </nav>
     <h3 class="catalog-title">Catalog</h3>
     <div class="card-deck">
-        <?php foreach ($products as $product): ?>
-        <?php $productId = $product->getId();
-        $disabled = isset($_SESSION['cart'][$productId]) && $_SESSION['cart'][$productId] > 1 ? '' : 'disabled';
-            ?>
+        <?php foreach ($newProducts as $userProduct): ?>
             <div class="card text-center">
                 <a href="#">
                     <div class="card-header">
                         <span class="badge badge-success">Hit!</span>
                     </div>
-                    <img class="card-img-top" src="<?php echo $product->getimageUrl(); ?>" alt="Card image">
+                    <img class="card-img-top" src="<?php echo $userProduct->getProduct()->getimageUrl(); ?>" alt="Card image">
                     <div class="card-body">
-                        <p class="product-name"><?php echo $product->getName(); ?></p>
-                        <p class="product-description"><?php echo $product->getDescription(); ?></p>
+                        <p class="product-name"><?php echo $userProduct->getProduct()->getName(); ?></p>
+                        <p class="product-description"><?php echo $userProduct->getProduct()->getDescription(); ?></p>
                     </div>
                     <div class="card-footer">
-                        <p class="price"><?php echo $product->getPrice() . "р"; ?></p>
+                        <p class="price"><?php echo $userProduct->getProduct()->getPrice() . "р"; ?></p>
                     </div>
                 </a>
             </div>
 
             <form action="/add-product" method="POST" class="product-form">
-                <input type="hidden" name="product_id" value="<?php echo $product->getId(); ?>" id="product_id" required>
+                <input type="hidden" name="product_id" value="<?php echo $userProduct->getProduct()->getId(); ?>" id="product_id" required>
                 <input type="hidden" name="amount" value="1">
                 <button type="submit" class="add-product-btn">+</button>
                 <div class="product-quantity">
-                    <?php
-                    echo $amountInCart. "шт";
+                    <?php echo $userProduct->getAmount() . " шт";
                     ?>
                 </div>
             </form>
             <form action="/decrease-product" method="POST" class="product-form">
-                <input type="hidden" name="product_id" value="<?php echo $product->getId(); ?>" id="product_id" required>
+                <input type="hidden" name="product_id" value="<?php echo $userProduct->getProduct()->getId(); ?>" id="product_id" required>
                 <button type="submit"  class="remove-product-btn">-</button>
             </form>
         <?php endforeach; ?>
@@ -155,43 +150,46 @@
         margin-top: 20px;
     }
 
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    .form-group input {
-        padding: 8px;
+    .product-quantity {
         font-size: 1rem;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        width: 100%;
-        max-width: 200px;
+        color: #333;
+        margin: 10px 0;
     }
 
-    .form-group input:focus {
-        outline: none;
-        border-color: #ff6347;
-    }
-
-    .error-message {
-        color: red;
-        font-size: 0.9rem;
-    }
-
-    .add-product-btn {
+    .product-btn {
         padding: 10px 20px;
         background-color: #ff6347;
         color: white;
         border: none;
-        font-size: 1rem;
+        font-size: 1.5rem;
         font-weight: bold;
-        border-radius: 5px;
+        border-radius: 50%;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        width: 50px;
+        height: 50px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
     }
 
-    .add-product-btn:hover {
+    .product-btn:hover {
         background-color: #d25e48;
+        transform: scale(1.1);
+    }
+
+    .product-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .remove-product-btn {
+        background-color: #ff6347;
+        border-radius: 50%;
+        font-size: 1.5rem;
+    }
+
+    .add-product-btn {
+        background-color: #28a745;
+        border-radius: 50%;
+        font-size: 1.5rem;
     }
 
     @media (max-width: 768px) {
@@ -205,4 +203,5 @@
             max-width: 350px;
         }
     }
+
 </style>

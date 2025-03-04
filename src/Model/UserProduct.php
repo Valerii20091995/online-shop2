@@ -64,6 +64,11 @@ class UserProduct extends Model
         $stmt = $this->pdo->prepare("DELETE FROM user_products WHERE user_id = :userId");
         $stmt->execute(['userId' => $userId]);
     }
+    public function removeProductInCart($productId, $userId)
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM user_products WHERE product_id = :productId AND user_id = :userId");
+        $stmt->execute(['productId' => $productId, 'userId' => $userId]);
+    }
 
     public function getId(): int
     {
@@ -83,6 +88,10 @@ class UserProduct extends Model
     public function getAmount(): int
     {
         return $this->amount;
+    }
+    public function setAmount(int $amount): void
+    {
+        $this->amount = $amount;
     }
 
     public function getProduct(): Product
