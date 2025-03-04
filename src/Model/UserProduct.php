@@ -40,8 +40,8 @@ class UserProduct extends Model
     {
         $stmt = $this->pdo->prepare("UPDATE user_products SET amount = :amount WHERE product_id = :productId AND user_id = :userId");
         $stmt->execute(['amount' => $amount, 'productId' => $productId, 'userId' => $userId]);
-        $stmt = $this->pdo->prepare("SELECT * FROM user_products WHERE product_id = :productId AND user_id = :userId");
-        $stmt->execute(['productId' => $productId, 'userId' => $userId]);
+//        $stmt = $this->pdo->prepare("SELECT * FROM user_products WHERE product_id = :productId AND user_id = :userId");
+//        $stmt->execute(['productId' => $productId, 'userId' => $userId]);
         $result = $stmt->fetch();
         return $result;
 

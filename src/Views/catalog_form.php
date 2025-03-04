@@ -35,10 +35,12 @@
                     ?>
                 </div>
             </form>
+        <?php if ($userProduct->getAmount() > 0): ?>
             <form action="/decrease-product" method="POST" class="product-form">
                 <input type="hidden" name="product_id" value="<?php echo $userProduct->getProduct()->getId(); ?>" id="product_id" required>
                 <button type="submit"  class="remove-product-btn">-</button>
             </form>
+            <?php endif; ?>
         <?php endforeach; ?>
     </div>
 </div>
