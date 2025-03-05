@@ -9,6 +9,10 @@ class Product extends Model
     private string $image_url;
     private $totalSum;
     private $amountInCart;
+    protected function getTableName():string
+    {
+        return "products";
+    }
     private function createObject(array $product):self|null
     {
         if(!$product) {
@@ -25,14 +29,14 @@ class Product extends Model
 
     public function getOneById($productId):self|null
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id = :productId");
+        $stmt = $this->pdo->prepare("SELECT * FROM {$this->getTableName()} WHERE id = :productId");
         $stmt->execute(['productId' => $productId]);
         $product = $stmt->fetch();
         return $this->createObject($product);
     }
     public function getByCatalog(int $userId):array|false
     {
-        $stmt = $this->pdo->query('SELECT * FROM products');
+        $stmt = $this->pdo->query("SELECT * FROM {$this->getTableName()}");
         $products = $stmt->fetchAll();
         $newProducts = [];
         foreach ($products as $product) {

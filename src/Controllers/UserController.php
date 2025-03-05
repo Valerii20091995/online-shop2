@@ -2,7 +2,6 @@
 namespace Controllers;
 
 use Model\User;
-use Service\authService;
 
 class UserController extends BaseController
 {

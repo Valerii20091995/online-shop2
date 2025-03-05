@@ -3,7 +3,7 @@
 namespace Controllers;
 use Service\authService;
 
-abstract class BaseController
+class BaseController
 {
     protected AuthService $authService;
 

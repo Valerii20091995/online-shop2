@@ -4,7 +4,6 @@ use Model\Order;
 use Model\OrderProduct;
 use Model\Product;
 use Model\UserProduct;
-use Service\AuthService;
 
 
 class OrderController extends BaseController

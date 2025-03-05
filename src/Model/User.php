@@ -6,6 +6,10 @@ class User extends Model
     private string $name;
     private string $email;
     private string $password;
+    protected function getTableName():string
+    {
+        return "users";
+    }
     public function createObj(array $user):self|null
     {
         if (!$user) {
@@ -21,7 +25,7 @@ class User extends Model
 
     public function getByEmail(string $email):self|null
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt = $this->pdo->prepare("SELECT * FROM {$this->getTableName()} WHERE email = :email");
         $stmt->execute([':email' => $email]);
         $user = $stmt->fetch();
         if (!$user) {
@@ -31,27 +35,27 @@ class User extends Model
     }
     public function addUser(string $name, string $email, string $password):array|false
     {
-        $stmt = $this->pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
+        $stmt = $this->pdo->prepare("INSERT INTO {$this->getTableName()} (name, email, password) VALUES (:name, :email, :password)");
         $stmt->execute([':name' => $name, ':email' => $email, ':password' => $password]);
         $result = $stmt->fetch();
         return $result;
     }
     public function userVerification(int $userId):self|null
     {
-        $stmt = $this->pdo->query('SELECT * FROM users WHERE id = ' . $_SESSION['userId']);
+        $stmt = $this->pdo->query("SELECT * FROM {$this->getTableName()} WHERE id = " . $_SESSION['userId']);
         $user = $stmt->fetch();
         return $this->createObj($user);
     }
     public function updateEmailByID(string $email, int $userId)
     {
-        $stmt = $this->pdo->prepare("UPDATE users SET email = :email WHERE id = $userId");
+        $stmt = $this->pdo->prepare("UPDATE {$this->getTableName()} SET email = :email WHERE id = $userId");
         $stmt->execute([':email' => $email]);
         $result = $stmt->fetch();
         return $result;
     }
     public function updateNamedByID(string $name, int $userId)
     {
-        $stmt = $this->pdo->prepare("UPDATE users SET name = :name WHERE id = $userId");
+        $stmt = $this->pdo->prepare("UPDATE {$this->getTableName()} SET name = :name WHERE id = $userId");
         $stmt->execute([':name' => $name]);
         $result = $stmt->fetch();
         return $result;
