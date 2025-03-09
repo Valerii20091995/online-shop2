@@ -41,6 +41,10 @@
                 <button type="submit"  class="remove-product-btn">-</button>
             </form>
             <?php endif; ?>
+            <form action="/product-review" method="POST" class="product-form">
+                <input type="hidden" name="product_id" value="<?php echo $userProduct->getProduct()->getId(); ?>" id="product_id" required>
+                <button type="submit"  class="remove-product-btn">отзывы о продукте</button>
+            </form>
         <?php endforeach; ?>
     </div>
 </div>

@@ -4,6 +4,7 @@ use Controllers\CartController;
 use Controllers\OrderController;
 use Controllers\ProductController;
 use Controllers\UserController;
+use Controllers\ReviewController;
 use Core\Autoloader;
 
 require_once "./../Core/Autoloader.php";
@@ -28,6 +29,9 @@ $app->get('/order', OrderController::class, 'getCheckOutForm');
 $app->post('/order', OrderController::class, 'handleCheckOut');
 $app->get('/orders', OrderController::class, 'getAllOrders');
 $app->post('/decrease-product', ProductController::class, 'decreaseProduct');
+$app->post('/product-review', ReviewController::class, 'getProduct');
+$app->post('/reviews', ReviewController::class, 'product');
+
 
 
 $app->run();
