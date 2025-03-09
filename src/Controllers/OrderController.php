@@ -4,6 +4,7 @@ use Model\Order;
 use Model\OrderProduct;
 use Model\Product;
 use Model\UserProduct;
+use Service\OrderService;
 
 
 class OrderController extends BaseController
@@ -12,6 +13,7 @@ class OrderController extends BaseController
     private OrderProduct $orderProductModel;
     private UserProduct $userProductModel;
     private Order $orderModel;
+    private OrderService $orderService;
 
     public function __construct()
     {
@@ -20,6 +22,7 @@ class OrderController extends BaseController
         $this->productModel = new Product();
         $this->orderProductModel = new OrderProduct();
         $this->orderModel = new Order();
+        $this->orderService = new OrderService();
     }
     public function getCheckOutForm()
     {
@@ -46,21 +49,9 @@ class OrderController extends BaseController
         }
         $errors = $this->validateOrder($_POST);
         if (empty($errors)) {
+            $data = $_POST;
             $userId = $_SESSION['userId'];
-            $name = $_POST['name'];
-            $phone = $_POST['phone'];
-            $comment = $_POST['comment'];
-            $address = $_POST['address'];
-
-            $orderId = $this->orderModel->addOrder($name, $phone, $comment, $address, $userId);
-            $userProducts = $this->userProductModel->getAllByUserId($userId);
-
-            foreach ($userProducts as $userProduct) {
-                $productId = $userProduct->getProductId();
-                $amount = $userProduct->getAmount();
-                $this->orderProductModel->create($orderId, $productId, $amount);
-            }
-            $this->userProductModel->deleteOrder($userId);
+            $this->orderService->handleCheckOut($data,$userId);
             header('Location: /orders');
             exit();
         } else {

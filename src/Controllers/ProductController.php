@@ -2,16 +2,20 @@
 namespace Controllers;
 use Model\Product;
 use Model\UserProduct;
+use Service\CartService;
+
 
 class ProductController extends BaseController
 {
     private $productModel;
     private $userProductModel;
+    private CartService $cartService;
     public function __construct()
     {
         parent::__construct();
         $this->productModel = new Product();
         $this->userProductModel = new UserProduct();
+        $this->cartService = new CartService();
     }
 
     public function getCatalog()
@@ -59,29 +63,16 @@ class ProductController extends BaseController
             exit();
         }
 
-//        $errors = $this->ValidateAddProduct($_POST);
-//        if (empty($errors)) {
+        $errors = $this->ValidateAddProduct($_POST);
+        if (empty($errors)) {
             $user = $this->authService->getCurrentUser();
             $productId = (int)$_POST['product_id'];
-//            $amount = (int)$_POST['amount'];
-//            добавляем 1 ровно 1 штуку товара
-            $amount = 1;
-//проверяем есть ли товар в корзине
-            $products = $this->userProductModel->getByUserProducts($user->getId(), $productId);
-//            если нету товара то +1 штука продукта
-            if ($products === null) {
-                $this->userProductModel->addProductByUser($user->getId(),$productId, $amount);
-            }else {
-//                есть есть продукт в корзине то +1 штука продукта
-                $newAmount = 1 + $products->getAmount();
-                $this->userProductModel->updateProductByUser($newAmount, $productId, $user->getId());
-
-            }
+            $this->cartService->addProduct($productId, $user->getId(), $_POST['amount']);+
             header('Location: /catalog');
             exit();
-
-//        }
+        }
     }
+
     public function decreaseProduct()
     {
         if (!$this->authService->check()) {
@@ -90,46 +81,36 @@ class ProductController extends BaseController
         }
         $user = $this->authService->getCurrentUser();
         $productId = (int)$_POST['product_id'];
+        $this->cartService->decreaseProduct($productId, $user->getId());
+        header('Location: /catalog');
+        exit();
 
-        $products = $this->userProductModel->getByUserProducts($user->getId(), $productId);
-        if ($products !== null) {
-            $amount = $products->getAmount();
-            if ($amount > 1) {
-                $newAmount = $amount - 1;
-                $this->userProductModel->updateProductByUser($newAmount, $productId, $user->getId());
-            } else {
-                $this->userProductModel->removeProductInCart($productId, $user->getId());
-            }
-            header('Location: /catalog');
-            exit();
-
-        }
     }
-//    private function ValidateAddProduct(array $data): array
-//    {
-//        $errors = [];
-//        if (isset($data['amount'])) {
-//            if (!filter_var($data['amount'], FILTER_VALIDATE_INT)) {
-//                $errors['amount'] = 'Это поле должно являться целым числом';
-//            } else {
-//                $amount = (int)$data['amount'];
-//
-//                if ($amount < 1 || $amount > 1000) {
-//                    $errors['amount'] = 'Количество товара не может быть меньше 1 или больше 100';
-//                }
-//            }
-//        }
-//        if (isset($data['product_id'])) {
-//            $productId = (int)$data['product_id'];
-//            $data = $this->productModel->getOneById($productId);
-//            if ($data === false) {
-//                $errors['product_id'] = 'Product не найден';
-//            }
-//        } else {
-//            $errors['product_id'] = 'id продукта должен обязательно указан';
-//        }
-//
-//
-//        return $errors;
-//    }
+    private function ValidateAddProduct(array $data): array
+    {
+        $errors = [];
+        if (isset($data['amount'])) {
+            if (!filter_var($data['amount'], FILTER_VALIDATE_INT)) {
+                $errors['amount'] = 'Это поле должно являться целым числом';
+            } else {
+                $amount = (int)$data['amount'];
+
+                if ($amount < 1 || $amount > 1000) {
+                    $errors['amount'] = 'Количество товара не может быть меньше 1 или больше 100';
+                }
+            }
+        }
+        if (isset($data['product_id'])) {
+            $productId = (int)$data['product_id'];
+            $data = $this->productModel->getOneById($productId);
+            if ($data === false) {
+                $errors['product_id'] = 'Product не найден';
+            }
+        } else {
+            $errors['product_id'] = 'id продукта должен обязательно указан';
+        }
+
+
+        return $errors;
+    }
 }
