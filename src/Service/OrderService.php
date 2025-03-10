@@ -2,6 +2,7 @@
 
 namespace Service;
 
+use DTO\OrderCreateDTO;
 use Model\Order;
 use Model\OrderProduct;
 use Model\UserProduct;
@@ -18,20 +19,22 @@ class OrderService
         $this->orderModel = new Order();
     }
 
-    public function handleCheckOut($data, $userId)
+    public function handleCheckOut(OrderCreateDTO $data)
     {
-        $name = $data['name'];
-        $phone = $data['phone'];
-        $comment = $data['comment'];
-        $address = $data['address'];
-        $orderId = $this->orderModel->addOrder($name, $phone, $comment, $address, $userId);
-        $userProducts = $this->userProductModel->getAllByUserId($userId);
+        $orderId = $this->orderModel->addOrder(
+            $data->getName(),
+            $data->getPhone(),
+            $data->getComment(),
+            $data->getAddress(),
+            $data->getUser()->getId()
+        );
+        $userProducts = $this->userProductModel->getAllByUserId($data->getUser()->getId());
 
         foreach ($userProducts as $userProduct) {
             $productId = $userProduct->getProductId();
             $amount = $userProduct->getAmount();
             $this->orderProductModel->create($orderId, $productId, $amount);
         }
-        $this->userProductModel->deleteOrder($userId);
+        $this->userProductModel->deleteOrder($data->getUser()->getId());
     }
 }

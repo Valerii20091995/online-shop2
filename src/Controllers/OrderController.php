@@ -1,10 +1,12 @@
 <?php
 namespace Controllers;
+use DTO\OrderCreateDTO;
 use Model\Order;
 use Model\OrderProduct;
 use Model\Product;
 use Model\UserProduct;
 use Service\OrderService;
+use Model\User;
 
 
 class OrderController extends BaseController
@@ -41,17 +43,16 @@ class OrderController extends BaseController
             exit();
         }
     }
-    public function handleCheckOut()
+    public function handleCheckOut(array $data)
     {
-        if (!$this->authService->check()) {
+        if (!$user = $this->authService->getCurrentUser()) {
             header("Location: /login");
             exit();
         }
         $errors = $this->validateOrder($_POST);
         if (empty($errors)) {
-            $data = $_POST;
-            $userId = $_SESSION['userId'];
-            $this->orderService->handleCheckOut($data,$userId);
+            $dto = new OrderCreateDTO($data['name'], $data['phone'],$data['comment'],$data['address'],$user);
+            $this->orderService->handleCheckOut($dto);
             header('Location: /orders');
             exit();
         } else {

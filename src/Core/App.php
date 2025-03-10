@@ -15,7 +15,7 @@ class App
                 $class = $handler['class'];
                 $method = $handler['method'];
                 $controller = new $class();
-                $controller->$method();
+                $controller->$method($_POST);
 
             } else {
                 echo "$requestMethod не поддерживается для $requestUri";

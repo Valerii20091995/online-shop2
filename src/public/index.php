@@ -21,14 +21,13 @@ $app->post('/catalog', ProductController::class, 'getCatalog');
 $app->get('/profile', UserController::class, 'profile');
 $app->get('/profile-change',UserController::class, 'getEditProfile');
 $app->post('/profile-change', UserController::class, 'editProfile');
-$app->get('/add-product', ProductController::class, 'getAddProduct');
-$app->post('/add-product', ProductController::class, 'addProduct');
+$app->post('/add-product', CartController::class, 'addProduct');
 $app->get('/cart', CartController::class, 'getCart');
 $app->get('/logout', UserController::class, 'logout');
 $app->get('/order', OrderController::class, 'getCheckOutForm');
 $app->post('/order', OrderController::class, 'handleCheckOut');
 $app->get('/orders', OrderController::class, 'getAllOrders');
-$app->post('/decrease-product', ProductController::class, 'decreaseProduct');
+$app->post('/decrease-product', CartController::class, 'decreaseProduct');
 $app->post('/product-review', ReviewController::class, 'getProduct');
 $app->post('/reviews', ReviewController::class, 'addReview');
 

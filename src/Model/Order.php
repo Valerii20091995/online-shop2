@@ -17,6 +17,21 @@ class Order extends Model
     {
         return "orders";
     }
+    private function createObject(array $userOrder):self|null
+    {
+        if(!$userOrder) {
+            return null;
+        }
+        $object = new self();
+        $object->id = $userOrder['id'];
+        $object->name = $userOrder['name'];
+        $object->phone = $userOrder['phone'];
+        $object->comment = $userOrder['comment'];
+        $object->address = $userOrder['address'];
+        $object->user_id = $userOrder['user_id'];
+        return $object;
+
+    }
     public function addOrder(string $name, string $phone, string $comment, string $address, int $userId):int|false
     {
         $stmt = $this->pdo->prepare(
@@ -43,21 +58,6 @@ class Order extends Model
              $newUserOrders[] = $this->createObject($userOrder);
          }
          return $newUserOrders;
-
-    }
-    private function createObject(array $userOrder):self|null
-    {
-        if(!$userOrder) {
-            return null;
-        }
-        $object = new self();
-        $object->id = $userOrder['id'];
-        $object->name = $userOrder['name'];
-        $object->phone = $userOrder['phone'];
-        $object->comment = $userOrder['comment'];
-        $object->address = $userOrder['address'];
-        $object->user_id = $userOrder['user_id'];
-        return $object;
 
     }
 
