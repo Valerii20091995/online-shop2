@@ -17,7 +17,7 @@
         <?php endif; ?>
 
 
-        <input type="text" placeholder="Enter email" name="mail" id="email" required>
+        <input type="text" placeholder="Enter email" name="email" id="email" required>
 
         <label for="psw"><b>Password</b></label>
         <?php if (isset($errors['psw'])):  ?>

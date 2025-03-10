@@ -1,8 +1,33 @@
 <?php
 
 namespace Request;
-
+use Model\Product;
 class AddProductRequest
 {
+    private Product $productModel;
+    public function __construct(private array $data)
+    {
+        $this->productModel = new Product();
+    }
+    public function getProductId(): int
+    {
+        return $this->data['productId'];
+    }
+    public function ValidateAddProduct(): array
+    {
+        $errors = [];
+        if (isset($this->data['product_id'])) {
+            $productId = (int)$this->data['product_id'];
+            $data = $this->productModel->getOneById($productId);
+            if ($data === false) {
+                $errors['product_id'] = 'Product не найден';
+            }
+        } else {
+            $errors['product_id'] = 'id продукта должен обязательно указан';
+        }
+
+
+        return $errors;
+    }
 
 }

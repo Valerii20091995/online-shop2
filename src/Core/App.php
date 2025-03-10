@@ -1,5 +1,8 @@
 <?php
 namespace Core;
+use Request\RegistrateRequest;
+use Request\LoginRequest;
+
 class App
 {
     private array $routes = [];
@@ -15,7 +18,12 @@ class App
                 $class = $handler['class'];
                 $method = $handler['method'];
                 $controller = new $class();
-                $controller->$method($_POST);
+                if ($method === 'registrate') {
+                    $request = new RegistrateRequest($_POST);
+                }elseif ($method === 'Login') {
+                    $request = new LoginRequest($_POST);
+                }
+                $controller->$method($request);
 
             } else {
                 echo "$requestMethod не поддерживается для $requestUri";

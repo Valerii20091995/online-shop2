@@ -4,6 +4,7 @@ use DTO\AddProductDTO;
 use DTO\DecreaseProductDTO;
 use Model\Product;
 use Model\UserProduct;
+use Request\AddProductRequest;
 use Service\CartService;
 
 class CartController extends BaseController
@@ -50,7 +51,7 @@ class CartController extends BaseController
             exit();
         }
     }
-    public function addProduct(array $data)
+    public function addProduct(AddProductRequest $request)
     {
 
         if (!$this->authService->check()) {
@@ -58,31 +59,16 @@ class CartController extends BaseController
             exit();
         }
 
-        $errors = $this->ValidateAddProduct($_POST);
+        $errors = $request->validateAddProduct();
         if (empty($errors)) {
             $user = $this->authService->getCurrentUser();
-            $dto = new AddProductDTO($user, $data['product_id']);
+            $dto = new AddProductDTO($user, $request->getProductId());
             $this->cartService->addProduct($dto);
             header('Location: /catalog');
             exit();
         }
     }
-    private function ValidateAddProduct(array $data): array
-    {
-        $errors = [];
-        if (isset($data['product_id'])) {
-            $productId = (int)$data['product_id'];
-            $data = $this->productModel->getOneById($productId);
-            if ($data === false) {
-                $errors['product_id'] = 'Product не найден';
-            }
-        } else {
-            $errors['product_id'] = 'id продукта должен обязательно указан';
-        }
 
-
-        return $errors;
-    }
 
 }
 

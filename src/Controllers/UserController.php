@@ -2,6 +2,8 @@
 namespace Controllers;
 
 use Model\User;
+use Request\LoginRequest;
+use Request\RegistrateRequest;
 
 class UserController extends BaseController
 {
@@ -16,67 +18,19 @@ class UserController extends BaseController
         require_once '../Views/registration_form.php';
     }
 
-    private function ValidateRegistration(array $data): array
+
+    public function registrate(RegistrateRequest $request)
     {
-        $errors = [];
-
-// объявление и валидация данных
-        if (isset($data['name'])) {
-            $name = $data['name'];
-            if (strlen($name) < 3) {
-                $errors['name'] = "Имя не может содержать меньше 3 символов";
-            }
-        } else {
-            $errors['name'] = "Имя должно быть заполнено";
-        }
-
-        if (isset($data['mail'])) {
-            $email = $data['mail'];
-            if (strlen($email) < 3) {
-                $errors['email'] = "Email не может содержать меньше 3 символов";
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $errors['email'] = "Некорректный email";
-            } else {
-                $user = $this->userModel->getByEmail($email);
-
-                if ($user !== null) {
-                    $errors['email'] = "Этот Email уже зарегестрирован!";
-                }
-            }
-        } else {
-            $errors['email'] = "Email должен быть заполнен";
-        }
-// проверка совпадения паролей
-        if (isset($data['psw'])) {
-            $password = $data['psw'];
-            if (strlen($password) < 3) {
-                $errors['psw'] = "Пароль не может содержать меньше 3 символов";
-            }
-            $passwordRepeat = $data["psw-repeat"];
-            if ($password !== $passwordRepeat) {
-                $errors['psw-repeat'] = "Пароли не совпадают!";
-            }
-        } else {
-            $errors['psw'] = "Пароль должен быть заполнен!";
-        }
-        return $errors;
-    }
-
-    public function registrate()
-    {
-        $errors = $this->ValidateRegistration($_POST);
+        $errors = $request->Validate();
 
 // сохранение в БД, если нет ошибок
         if (empty($errors)) {
-            $name = $_POST['name'];
-            $email = $_POST['mail'];
-            $password = $_POST['psw'];
-            $passwordRepeat = $_POST['psw-repeat'];
-            $password = password_hash($password, PASSWORD_DEFAULT);
+//            $passwordRepeat = $request->getPassword();
+            $password = password_hash($request->getPassword(), PASSWORD_DEFAULT);
 
             //добавление  новых пользователей
-            $user = $this->userModel->addUser($name, $email, $password);
-            $user = $this->userModel->getByEmail($email);
+            $user = $this->userModel->addUser($request->getName(), $request->getEmail(), $request->getPassword());
+            $user = $this->userModel->getByEmail($request->getEmail());
         }
         require_once '../Views/registration_form.php';
     }
@@ -86,11 +40,11 @@ class UserController extends BaseController
     {
         require_once '../Views/login_form.php';
     }
-    public function login()
+    public function login(LoginRequest $request)
     {
-        $errors = $this->ValidateLogin($_POST);
+        $errors = $request->Validate();
         if (empty($errors)) {
-            $result = $this->authService->auth($_POST['email'], $_POST['password']);
+            $result = $this->authService->auth($request->getEmail(), $request->getPassword());
             if ($result === true) {
                 header("Location: /catalog");
                 exit();
@@ -101,18 +55,7 @@ class UserController extends BaseController
         require_once '../Views/login_form.php';
     }
 
-    private function ValidateLogin(array $date): array
-    {
-        $errors = [];
-        // проверка наличия переменных
-        if (!isset($date['email'])) {
-            $errors['email'] = "Поле Username обязательно для заполнения!";
-        }
-        if (!isset($date['password'])) {
-            $errors['password'] = "Поле Password обязательно для заполнения!";
-        }
-        return $errors;
-    }
+
 
     // Выдача профиля
     public function profile()
