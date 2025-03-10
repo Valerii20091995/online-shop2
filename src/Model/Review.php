@@ -28,8 +28,8 @@ class Review extends Model
         $object->date = $review['date'];
         return $object;
     }
-    public function getReviewsByProductId($productId) {
-
+    public function getReviewsByProductId(int $productId):array
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM {$this->getTableName()} WHERE product_id = :productId");
         $stmt->execute(['productId' => $productId]);
         $data = $stmt->fetchAll();
@@ -39,7 +39,7 @@ class Review extends Model
         }
         return $reviews;
     }
-    public function getAverageRating($productId)
+    public function getAverageRating(int $productId):int|float
     {
         $stmt = $this->pdo->prepare("SELECT rating FROM {$this->getTableName()} WHERE product_id = :productId");
         $stmt->execute(['productId' => $productId]);
@@ -54,9 +54,11 @@ class Review extends Model
 
 
     }
-    public function addReview($productId, $rating, $author, $product_review):void
+    public function addReview(int $productId,int $rating,string $author,string $product_review)
     {
-        $stmt =$this->pdo->prepare("INSERT INTO {$this->getTableName()} (product_id, rating, author, product_review) VALUES (:productId, :rating, :author, :review)");
+        $stmt =$this->pdo->prepare(
+            "INSERT INTO {$this->getTableName()} (product_id, rating, author, product_review)
+            VALUES (:productId, :rating, :author, :review)");
         $stmt->execute(['productId' => $productId, 'rating' => $rating, 'author' => $author, 'review' => $product_review]);
     }
     public function getId()

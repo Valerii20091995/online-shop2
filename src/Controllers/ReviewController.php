@@ -28,7 +28,7 @@ class ReviewController extends BaseController
         $averageRating = $this->reviewModel->getAverageRating($productId);
         require_once '../Views/review_form.php';
     }
-    public function product()
+    public function addReview()
     {
 //   сюда должно прилетать методом пост все столбы из таблицы отзывов
         $productId = $_POST['product_id'];

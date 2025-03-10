@@ -58,7 +58,7 @@ class OrderController extends BaseController
             require_once '../Views/order_form.php';
         }
     }
-    public function getAllOrders(): void
+    public function getAllOrders()
     {
         if (!$this->authService->check()) {
             header("Location: /login");
