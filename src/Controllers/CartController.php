@@ -36,16 +36,16 @@ class CartController extends BaseController
         }
          require_once '../Views/cart_form.php';
     }
-    public function decreaseProduct(array $data)
+    public function decreaseProduct(AddProductRequest $request)
     {
         if (!$this->authService->check()) {
             header('Location: /login');
             exit();
         }
-        $errors = $this->ValidateAddProduct($_POST);
+        $errors = $request->ValidateAddProduct();
         if (empty($errors)) {
             $user = $this->authService->getCurrentUser();
-            $dto = new DecreaseProductDTO($user, $data['product_id']);
+            $dto = new DecreaseProductDTO($user, $request->getProductId());
             $this->cartService->decreaseProduct($dto);
             header('Location: /catalog');
             exit();

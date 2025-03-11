@@ -11,7 +11,7 @@ class AddProductRequest
     }
     public function getProductId(): int
     {
-        return $this->data['productId'];
+        return $this->data['product_id'];
     }
     public function ValidateAddProduct(): array
     {

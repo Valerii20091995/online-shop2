@@ -18,12 +18,15 @@ class App
                 $class = $handler['class'];
                 $method = $handler['method'];
                 $controller = new $class();
-                if ($method === 'registrate') {
-                    $request = new RegistrateRequest($_POST);
-                }elseif ($method === 'Login') {
-                    $request = new LoginRequest($_POST);
+                $requestClass = $handler['request'];
+                if ($requestClass !== null) {
+                    $request = new $requestClass($_POST);
+                    $controller->$method($request);
+                } else {
+                    $controller->$method();
                 }
-                $controller->$method($request);
+
+
 
             } else {
                 echo "$requestMethod не поддерживается для $requestUri";
@@ -35,18 +38,21 @@ class App
         }
 
     }
-    public function get(string $route,string $className, string $method)
+    public function get(string $route,string $className, string $method, $requestClass = null)
     {
         $this->routes[$route]['GET'] = [
             'class' =>  $className,
             'method' => $method,
+            'request' => $requestClass
+
         ];
     }
-    public function post(string $route,string $className, string $method)
+    public function post(string $route,string $className, string $method,string $requestClass = null)
     {
         $this->routes[$route]['POST']= [
             'class' =>  $className,
             'method' => $method,
+            'request' => $requestClass,
         ];
     }
 }

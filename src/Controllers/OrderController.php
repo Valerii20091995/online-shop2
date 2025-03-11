@@ -5,6 +5,7 @@ use Model\Order;
 use Model\OrderProduct;
 use Model\Product;
 use Model\UserProduct;
+use Request\OrderRequest;
 use Service\OrderService;
 use Model\User;
 
@@ -43,15 +44,15 @@ class OrderController extends BaseController
             exit();
         }
     }
-    public function handleCheckOut(array $data)
+    public function handleCheckOut(OrderRequest $request)
     {
         if (!$user = $this->authService->getCurrentUser()) {
             header("Location: /login");
             exit();
         }
-        $errors = $this->validateOrder($_POST);
+        $errors = $request->validate();
         if (empty($errors)) {
-            $dto = new OrderCreateDTO($data['name'], $data['phone'],$data['comment'],$data['address'],$user);
+            $dto = new OrderCreateDTO($request->getName(), $request->getPhone(),$request->getComment(),$request->getAddress(),$user);
             $this->orderService->handleCheckOut($dto);
             header('Location: /orders');
             exit();
@@ -92,42 +93,6 @@ class OrderController extends BaseController
             $newUserOrders[] = $userOrder;
         }
         require_once '../Views/order_detail.php';
-    }
-
-
-    private function validateOrder(array $data): array
-    {
-        $errors = [];
-        if (isset($data['name'])) {
-            if (strlen($data['name']) < 3) {
-                $errors['name'] = 'Имя пользователя должно быть больше 3 символов';
-            } elseif (!preg_match('/^[a-zA-Zа-яА-Я0-9_\-\.]+$/u', $data['name'])) {
-                $errors['name'] = "Имя пользователя может содержать только буквы, цифры, символы '_', '-', '.'";
-            }
-        } else {
-            $errors['name'] = "Имя должно быть заполнено";
-        }
-
-        if (isset($data['address'])) {
-            if (!preg_match('/^[\d\s\w\.,-]+$/u', $data['address'])) {
-                $errors['address'] = "Адрес содержит недопустимые символы";
-            }elseif (!preg_match('/[а-яА-ЯёЁ]+\s+\d+/', $data['address'])) {
-                $errors['address'] = "Укажите номер дома и улицу";
-            }
-        } else {
-            $errors['address'] = "Address должен быть заполнен";
-        }
-        if (isset($data['phone'])) {
-            $cleanedPhone = preg_replace('/\D/', '', $data['phone']);
-            if(strlen($cleanedPhone) < 11) {
-                $errors['phone'] = 'Номер телефона не может быть меньше 11 символов';
-            }elseif (!preg_match('/^\+\d+$/', $data['phone'])) {
-                $errors['phone'] = "+ и цифры после";
-            }
-        } else {
-            $errors['phone'] = "Поле Phone должно быть заполнено";
-        }
-        return $errors;
     }
     public function newOrderProducts(array $orderProducts)
     {

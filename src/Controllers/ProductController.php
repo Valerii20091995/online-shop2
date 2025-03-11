@@ -9,13 +9,11 @@ class ProductController extends BaseController
 {
     private $productModel;
     private $userProductModel;
-    private CartService $cartService;
     public function __construct()
     {
         parent::__construct();
         $this->productModel = new Product();
         $this->userProductModel = new UserProduct();
-        $this->cartService = new CartService();
     }
 
     public function getCatalog()

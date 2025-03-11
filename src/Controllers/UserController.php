@@ -2,6 +2,7 @@
 namespace Controllers;
 
 use Model\User;
+use Request\EditProfileRequest;
 use Request\LoginRequest;
 use Request\RegistrateRequest;
 
@@ -18,16 +19,12 @@ class UserController extends BaseController
         require_once '../Views/registration_form.php';
     }
 
-
     public function registrate(RegistrateRequest $request)
     {
         $errors = $request->Validate();
-
-// сохранение в БД, если нет ошибок
         if (empty($errors)) {
 //            $passwordRepeat = $request->getPassword();
             $password = password_hash($request->getPassword(), PASSWORD_DEFAULT);
-
             //добавление  новых пользователей
             $user = $this->userModel->addUser($request->getName(), $request->getEmail(), $request->getPassword());
             $user = $this->userModel->getByEmail($request->getEmail());
@@ -81,26 +78,18 @@ class UserController extends BaseController
         require_once '../Views/edit_profile_form.php';
     }
 
-    public function editProfile()
+    public function editProfile(EditProfileRequest $request)
     {
         $this->authService->startSession();
-        $errors = $this->ValidateProfile($_POST);
-
+        $errors = $request->Validate();
         if (empty($errors)) {
-
-            $userId = $_SESSION['userId'];
-            $name = $_POST['name'];
-            $email = $_POST['email'];
-            $user = $this->userModel->userVerification($userId);
-
-
-            if ($user->getName() !== $name) {
-
-                $this->userModel->updateNamedByID($name, $userId);
+            $userId = $this->authService->getCurrentUser();
+            $user = $this->userModel->userVerification($userId->getId());
+            if ($user->getName() !== $request->getName()) {
+                $this->userModel->updateNamedByID($request->getName(), $userId->getId());
             }
-
-            if ($user->getEmail() !== $email) {
-                $this->userModel->updateEmailByID($email, $userId);
+            if ($user->getEmail() !== $request->getEmail()) {
+                $this->userModel->updateEmailByID($request->getEmail(), $user->getId());
             }
             header("Location: ./profile");
             exit;
@@ -108,31 +97,7 @@ class UserController extends BaseController
         require_once '../Views/edit_profile_form.php';
     }
 
-    private function ValidateProfile(array $data): array
-    {
-        $errors = [];
-        if (isset($data['name'])) {
-            $name = $data['name'];
-            if (strlen($name) < 3) {
-                $errors['name'] = "Имя не может содержать меньше 3 символов";
-            }
-        }
-        if (isset($data['email'])) {
-            $email = $data['email'];
-            if (strlen($email) < 3) {
-                $errors['email'] = "Email не может содержать меньше 3 символов";
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $errors['email'] = "Некорректный email";
-            } else {
-                $user = $this->userModel->getByEmail($email);
-                $userId = $_SESSION['userId'];
-                if ($user && $user->getEmail() === $email && $user->getId() !== $userId) {
-                    $errors['email'] = "Этот Email уже зарегистрирован!";
-                }
-            }
-        }
-        return $errors;
-    }
+
     public function logout()
     {
         $this->authService->logout();
