@@ -5,6 +5,7 @@ use DTO\DecreaseProductDTO;
 use Model\Product;
 use Model\UserProduct;
 use Request\AddProductRequest;
+use Request\DecreaseProductRequest;
 use Service\CartService;
 
 class CartController extends BaseController
@@ -36,7 +37,7 @@ class CartController extends BaseController
         }
          require_once '../Views/cart_form.php';
     }
-    public function decreaseProduct(AddProductRequest $request)
+    public function decreaseProduct(DecreaseProductRequest $request)
     {
         if (!$this->authService->check()) {
             header('Location: /login');

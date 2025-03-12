@@ -3,6 +3,8 @@
 namespace Controllers;
 use Model\Product;
 use Model\Review;
+use Request\AddReviewRequest;
+
 class ReviewController extends BaseController
 {
     private  $reviewModel;
@@ -28,14 +30,15 @@ class ReviewController extends BaseController
         $averageRating = $this->reviewModel->getAverageRating($productId);
         require_once '../Views/review_form.php';
     }
-    public function addReview()
+    public function addReview(AddReviewRequest $request)
     {
 //   сюда должно прилетать методом пост все столбы из таблицы отзывов
-        $productId = $_POST['product_id'];
-        $rating = $_POST['rating'];
-        $author = $_POST['author'];
-        $product_review = $_POST['product_review'];
-        $this->reviewModel->addReview($productId, $rating, $author, $product_review);
+        $this->reviewModel->addReview(
+            $request->getProductId(),
+            $request->getRating(),
+            $request->getAuthor(),
+            $request->getProduct_review()
+        );
         header('Location: /catalog');
         exit();
     }

@@ -2,11 +2,8 @@
 
 namespace Request;
 
-class LoginRequest
+class LoginRequest extends Request
 {
-    public function __construct(private array $data)
-    {
-    }
     public function getEmail(): string
     {
         return $this->data['email'];

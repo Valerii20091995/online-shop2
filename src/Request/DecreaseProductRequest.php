@@ -1,8 +1,10 @@
 <?php
 
 namespace Request;
+
 use Model\Product;
-class AddProductRequest extends Request
+
+class DecreaseProductRequest extends Request
 {
     private Product $productModel;
     public function __construct(array $data)

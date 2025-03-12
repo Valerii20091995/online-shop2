@@ -3,11 +3,12 @@
 namespace Request;
 
 use Model\User;
-class RegistrateRequest
+class RegistrateRequest extends Request
 {
     private User $userModel;
-    public function __construct(private array $data)
+    public function __construct(array $data)
     {
+        parent::__construct($data);
         $this->userModel = new User();
     }
     public function getName(): string

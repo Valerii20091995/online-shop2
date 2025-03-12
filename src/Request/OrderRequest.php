@@ -2,12 +2,8 @@
 
 namespace Request;
 
-class OrderRequest
+class OrderRequest extends Request
 {
-    public function __construct(private array $data)
-    {
-
-    }
     public function getName(): string
     {
         return $this->data['name'];
