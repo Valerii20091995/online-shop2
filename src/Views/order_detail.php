@@ -100,12 +100,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($newUserOrder->getProducts() as $newOrderProduct): ?>
+                <?php foreach ($newUserOrder->getProducts() as $userProduct): ?>
                     <tr>
-                        <td><?php echo $newOrderProduct->getProduct()->getName()?></td>
-                        <td><?php echo $newOrderProduct->getAmount()?></td>
-                        <td><?php echo $newOrderProduct->getProduct()->getPrice()?></td>
-                        <td><?php echo $newOrderProduct->getProduct()->getTotalSum()?></td>
+                        <td><?php echo $userProduct->getProduct()->getName()?></td>
+                        <td><?php echo $userProduct->getAmount()?></td>
+                        <td><?php echo $userProduct->getProduct()->getPrice()?></td>
+                        <td><?php echo $userProduct->getTotalSum()?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

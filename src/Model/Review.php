@@ -4,11 +4,11 @@ namespace Model;
 
 class Review extends Model
 {
-    private $id;
-    private $product_id;
-    private $rating;
-    private $author;
-    private $product_review;
+    private int $id;
+    private int $product_id;
+    private int $rating;
+    private  string $author;
+    private string $product_review;
     private $date;
     protected function getTableName():string
     {

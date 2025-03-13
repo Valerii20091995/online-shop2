@@ -7,8 +7,8 @@ class Product extends Model
     private string $description;
     private int $price;
     private string $image_url;
-    private $totalSum;
-    private $amountInCart;
+
+    private int $amountInCart;
     protected function getTableName():string
     {
         return "products";
@@ -66,14 +66,7 @@ class Product extends Model
     {
         return $this->image_url;
     }
-    public function getTotalSum():int
-    {
-        return $this->totalSum;
-    }
-    public function setTotalSum($totalSum): void
-    {
-        $this->totalSum = $totalSum;
-    }
+
     public function getAmountInCart()
     {
         return $this->amountInCart;

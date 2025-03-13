@@ -1,9 +1,6 @@
 <?php
 
 namespace DTO;
-
-use Model\User;
-
 class OrderCreateDTO
 {
     public function __construct(
@@ -11,7 +8,6 @@ class OrderCreateDTO
         private string $phone,
         private string $comment,
         private string $address,
-        private User $user
     ){
     }
 
@@ -35,10 +31,6 @@ class OrderCreateDTO
         return $this->address;
     }
 
-    public function getUser(): User
-    {
-        return $this->user;
-    }
 
 
 }

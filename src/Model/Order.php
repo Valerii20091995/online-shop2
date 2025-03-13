@@ -11,8 +11,9 @@ class Order extends Model
     private string $address;
     private int $user_id;
     private Product $product;
-    private int $total;
+    private int $sum;
     private array $products =[];
+
     protected function getTableName():string
     {
         return "orders";
@@ -101,14 +102,14 @@ class Order extends Model
         $this->product = $product;
     }
 
-    public function getTotal(): int
+    public function getSum(): int
     {
-        return $this->total;
+        return $this->sum;
     }
 
-    public function setTotal(int $total): void
+    public function setSum(int $sum): void
     {
-        $this->total = $total;
+        $this->sum = $sum;
     }
 
     public function getProducts(): array

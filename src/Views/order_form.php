@@ -95,14 +95,14 @@
             <input type="submit" value="Оформить заказ">
         </div>
         <div class="container">
-            <?php foreach ($newOrderProducts as $newOrderProduct): ?>
-            <h2><?php echo $newOrderProduct->getProduct()->getName()?></h2>
+            <?php foreach ($userProducts as $userProduct): ?>
+            <h2><?php echo $userProduct->getProduct()->getName()?></h2>
             <label for="amount">Количество:</label>
-            <input type="number" id="amount" name="amount" min="1" value=<?php echo $newOrderProduct->getAmount()?> required>
+            <input type="number" id="amount" name="amount" min="1" value=<?php echo $userProduct->getAmount()?> required>
             <label for="amount">Стоимость за 1 шт:</label>
-            <div class="price">₽ <?php echo $newOrderProduct->getProduct()->getPrice()?></div>
+            <div class="price">₽ <?php echo $userProduct->getProduct()->getPrice()?></div>
             <label for="totalProduct">Итого:</label>
-            <div class="price">₽ <?php echo $newOrderProduct->getProduct()->getTotalSum();?></div>
+            <div class="price">₽ <?php echo $userProduct->getTotalSum();?></div>
             <?php endforeach; ?>
             <h2><label for="totalOrder">Заказ на сумму:</label></h2>
             <div class="price">₽ <?php echo $total;?></div>

@@ -7,8 +7,8 @@ use Service\CartService;
 
 class ProductController extends BaseController
 {
-    private $productModel;
-    private $userProductModel;
+    private Product $productModel;
+    private UserProduct $userProductModel;
     public function __construct()
     {
         parent::__construct();

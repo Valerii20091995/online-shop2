@@ -9,7 +9,7 @@ class OrderProduct extends Model
     private int $product_id;
     private int $amount;
     private Product $product;
-    private int $total;
+    private int $sum;
     protected function getTableName():string
     {
         return "order_products";
@@ -78,14 +78,14 @@ class OrderProduct extends Model
         $this->product = $product;
     }
 
-    public function getTotal(): int
+    public function getSum (): int
     {
-        return $this->total;
+        return $this->sum;
     }
 
-    public function setTotal(int $total): void
+    public function setSum(int $sum): void
     {
-        $this->total = $total;
+        $this->sum = $sum;
     }
 
 

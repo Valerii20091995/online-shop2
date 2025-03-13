@@ -21,7 +21,7 @@ class OrderRequest extends Request
     {
         return $this->data['address'];
     }
-    public function validate(): array
+    public function Validate(): array
     {
         $errors = [];
         if (isset($this->data['name'])) {

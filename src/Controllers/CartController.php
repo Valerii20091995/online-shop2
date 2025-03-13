@@ -2,38 +2,25 @@
 namespace Controllers;
 use DTO\AddProductDTO;
 use DTO\DecreaseProductDTO;
-use Model\Product;
-use Model\UserProduct;
 use Request\AddProductRequest;
 use Request\DecreaseProductRequest;
 use Service\CartService;
 
 class CartController extends BaseController
 {
-    private UserProduct  $userProductModel;
-    private Product $productModel;
     private CartService $cartService;
 
     public function __construct()
     {
         parent::__construct();
-        $this->userProductModel = New UserProduct();
-        $this->productModel = new Product();
         $this->cartService = new CartService();
     }
     public function getCart():void
     {
         $products = [];
         if ($this->authService->check()) {
-            $user = $this->authService->getCurrentUser();
-            $userProducts = $this->userProductModel->getAllByUserId($user->getId());
+            $userProducts = $this->cartService->getUserProducts();
 
-            foreach ($userProducts as $userProduct) {
-                $productId = $userProduct->getProductId();
-                $product = $this->productModel->getOneById($productId);
-                $userProduct->setProduct($product);
-                $products[] = $userProduct;
-            }
         }
          require_once '../Views/cart_form.php';
     }
@@ -43,10 +30,9 @@ class CartController extends BaseController
             header('Location: /login');
             exit();
         }
-        $errors = $request->ValidateAddProduct();
+        $errors = $request->Validate();
         if (empty($errors)) {
-            $user = $this->authService->getCurrentUser();
-            $dto = new DecreaseProductDTO($user, $request->getProductId());
+            $dto = new DecreaseProductDTO($request->getProductId());
             $this->cartService->decreaseProduct($dto);
             header('Location: /catalog');
             exit();
@@ -60,10 +46,9 @@ class CartController extends BaseController
             exit();
         }
 
-        $errors = $request->validateAddProduct();
+        $errors = $request->Validate();
         if (empty($errors)) {
-            $user = $this->authService->getCurrentUser();
-            $dto = new AddProductDTO($user, $request->getProductId());
+            $dto = new AddProductDTO($request->getProductId());
             $this->cartService->addProduct($dto);
             header('Location: /catalog');
             exit();

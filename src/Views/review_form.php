@@ -20,8 +20,11 @@
 
     <h3>Оставить отзыв</h3>
     <form action="/reviews" method="POST">
-        <input type="hidden" name="product_id" value="<?php echo $product->getId(); ?>"> <!-- передаем ID продукта -->
+        <input type="hidden" name="product_id" value="<?php echo $product->getId(); ?>">
         <label for="rating">Оценка (1-5):</label>
+        <?php if (isset($errors['rating'])): ?>
+            <span class="error"><?php echo $errors['rating']; ?></span>
+        <?php endif; ?><br>
         <input type="number" name="rating" min="1" max="5" required><br>
 
         <label for="author">Ваше имя:</label>
@@ -29,6 +32,9 @@
 
         <label for="product_review">Ваш отзыв:</label><br>
         <textarea name="product_review" required></textarea><br>
+        <?php if (isset($errors['product_review'])): ?>
+            <span class="error"><?php echo $errors['product_review']; ?></span>
+        <?php endif; ?><br>
 
         <button type="submit">Отправить отзыв</button>
     </form>

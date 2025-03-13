@@ -1,6 +1,7 @@
 <?php
 namespace Controllers;
 
+use DTO\AuthenticationDTO;
 use Model\User;
 use Request\EditProfileRequest;
 use Request\LoginRequest;
@@ -41,7 +42,8 @@ class UserController extends BaseController
     {
         $errors = $request->Validate();
         if (empty($errors)) {
-            $result = $this->authService->auth($request->getEmail(), $request->getPassword());
+            $dto = new AuthenticationDTO($request->getEmail(), $request->getPassword());
+            $result = $this->authService->auth($dto);
             if ($result === true) {
                 header("Location: /catalog");
                 exit();

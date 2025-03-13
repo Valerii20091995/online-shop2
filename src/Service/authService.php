@@ -2,6 +2,7 @@
 
 namespace Service;
 
+use DTO\AuthenticationDTO;
 use Model\User;
 
 class authService
@@ -28,14 +29,14 @@ class authService
             return null;
         }
     }
-    public function auth(string $email, string $password):bool
+    public function auth(AuthenticationDTO $data): bool
     {
-        $user = $this->userModel->getByEmail($email);
+        $user = $this->userModel->getByEmail($data->getEmail());
         if ($user === null) {
             return false;
         } else {
             $passwordDB = $user->getPassword();
-            if (password_verify($password, $passwordDB)) {
+            if (password_verify($data->getPassword(), $passwordDB)) {
                 //вход через сессии
                 $this->startSession();
                 $_SESSION['userId'] = $user->getId();

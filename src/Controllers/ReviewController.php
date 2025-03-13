@@ -7,8 +7,8 @@ use Request\AddReviewRequest;
 
 class ReviewController extends BaseController
 {
-    private  $reviewModel;
-    private  $productModel;
+    private Review $reviewModel;
+    private Product  $productModel;
 
     public function __construct()
     {
@@ -32,15 +32,17 @@ class ReviewController extends BaseController
     }
     public function addReview(AddReviewRequest $request)
     {
-//   сюда должно прилетать методом пост все столбы из таблицы отзывов
-        $this->reviewModel->addReview(
-            $request->getProductId(),
-            $request->getRating(),
-            $request->getAuthor(),
-            $request->getProduct_review()
-        );
-        header('Location: /catalog');
-        exit();
+        $errors = $request->Validate();
+        if (empty($errors)) {
+            $this->reviewModel->addReview(
+                $request->getProductId(),
+                $request->getRating(),
+                $request->getAuthor(),
+                $request->getProduct_review()
+            );
+            header('Location: /catalog');
+            exit();
+        }
     }
 
 

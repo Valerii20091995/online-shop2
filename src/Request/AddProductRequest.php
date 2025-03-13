@@ -14,7 +14,7 @@ class AddProductRequest extends Request
     {
         return $this->data['product_id'];
     }
-    public function ValidateAddProduct(): array
+    public function Validate(): array
     {
         $errors = [];
         if (isset($this->data['product_id'])) {
