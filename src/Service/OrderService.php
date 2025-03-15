@@ -7,7 +7,7 @@ use Model\Order;
 use Model\OrderProduct;
 use Model\Product;
 use Model\UserProduct;
-use Service\Auth\authInterface;
+use Service\Auth\AuthInterface;
 use Service\Auth\authSessionService;
 
 class OrderService
@@ -15,7 +15,7 @@ class OrderService
     private OrderProduct $orderProductModel;
     private UserProduct $userProductModel;
     private Order $orderModel;
-    private authInterface $authService;
+    private AuthInterface $authService;
     private Product $productModel;
     public function __construct()
     {
