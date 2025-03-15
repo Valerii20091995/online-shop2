@@ -121,6 +121,10 @@ class Order extends Model
     {
         $this->products = $products;
     }
+    public function setOrderProducts(array $orderProducts): void
+    {
+        $this->products = $orderProducts;
+    }
 
 
 

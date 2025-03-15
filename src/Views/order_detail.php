@@ -83,7 +83,7 @@
 <a href="/catalog">Каталог</a>
 <h1>Мои Заказы</h1>
 <div class="order-container">
-    <?php foreach ($newUserOrders as $newUserOrder): ?>
+    <?php foreach ($userOrders as $newUserOrder): ?>
         <div class="order-card">
             <h2>Заказ № <?php echo $newUserOrder->getId()?></h2>
             <p><?php echo $newUserOrder->getName()?></p>
@@ -105,12 +105,12 @@
                         <td><?php echo $userProduct->getProduct()->getName()?></td>
                         <td><?php echo $userProduct->getAmount()?></td>
                         <td><?php echo $userProduct->getProduct()->getPrice()?></td>
-                        <td><?php echo $userProduct->getTotalSum()?></td>
+                        <td><?php echo $userProduct->getSum()?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
-            <p>Сумма заказа <?php echo $newUserOrder->getTotal();?></p>
+            <p>Сумма заказа <?php echo $newUserOrder->getSum();?></p>
         </div>
     <?php endforeach; ?>
 </div>
