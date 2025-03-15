@@ -1,11 +1,11 @@
 <?php
 
-namespace Service;
+namespace Service\Auth;
 
 use DTO\AuthenticationDTO;
 use Model\User;
 
-class authService
+class authSessionService implements AuthInterface
 {
     public User $userModel;
     public function __construct()

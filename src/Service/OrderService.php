@@ -7,20 +7,22 @@ use Model\Order;
 use Model\OrderProduct;
 use Model\Product;
 use Model\UserProduct;
+use Service\Auth\authInterface;
+use Service\Auth\authSessionService;
 
 class OrderService
 {
     private OrderProduct $orderProductModel;
     private UserProduct $userProductModel;
     private Order $orderModel;
-    private AuthService $authService;
+    private authInterface $authService;
     private Product $productModel;
     public function __construct()
     {
         $this->orderProductModel = new OrderProduct();
         $this->userProductModel = new UserProduct();
         $this->orderModel = new Order();
-        $this->authService = new AuthService();
+        $this->authService = new authSessionService();
         $this->productModel = new Product();
     }
 

@@ -6,18 +6,20 @@ use DTO\AddProductDTO;
 use DTO\DecreaseProductDTO;
 use Model\Product;
 use Model\UserProduct;
+use Service\Auth\authInterface;
+use Service\Auth\authSessionService;
 
 
 class CartService
 {
     private  UserProduct $userProductModel;
     private Product $productModel;
-    private authService $authService;
+    private authInterface $authService;
     public function __construct()
     {
         $this->userProductModel = new UserProduct();
         $this->productModel = new Product();
-        $this->authService = new AuthService();
+        $this->authService = new authSessionService();
     }
     public function addProduct(AddProductDTO $data)
     {
