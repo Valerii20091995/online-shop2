@@ -2,13 +2,13 @@
 
 namespace Model;
 use Throwable;
-class LoggerError extends Model
+class Logger extends Model
 {
     protected function getTableName(): string
     {
         return "errors";
     }
-    public function addError(Throwable $exception)
+    public function addLog(Throwable $exception)
     {
         $stmt =$this->pdo->prepare(
             "INSERT INTO {$this->getTableName()} (error_message, file, line)

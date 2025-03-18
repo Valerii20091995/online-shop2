@@ -4,7 +4,7 @@ namespace Service\Logger;
 
 class LoggerFileErrorService implements LoggerInterface
 {
-    public function Errors(\Throwable $exception)
+    public function Logs(\Throwable $exception)
     {
         $errorMessage = sprintf("[%s] Ошибка: %s в файле %s на строке %d\n",
             date("Y-m-d H:i:s"),

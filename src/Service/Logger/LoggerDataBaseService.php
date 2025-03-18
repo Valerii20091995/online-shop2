@@ -2,18 +2,18 @@
 
 namespace Service\Logger;
 
-use Model\LoggerError;
+use Model\Logger;
 
 class LoggerDataBaseService implements LoggerInterface
 {
-    private LoggerError $loggerError;
+    private Logger $loggerError;
     public function __construct()
     {
-        $this->loggerError = new LoggerError();
+        $this->loggerError = new Logger();
     }
-    public function Errors(\Throwable $exception)
+    public function Logs(\Throwable $exception)
     {
-        $this->loggerError->addError($exception);
+        $this->loggerError->addLog($exception);
     }
 
 }

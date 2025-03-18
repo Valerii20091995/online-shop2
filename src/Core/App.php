@@ -36,7 +36,7 @@ class App
                         $controller->$method();
                     }
                 } catch (\Throwable $exception) {
-                    $this->loggerService->Errors($exception);
+                    $this->loggerService->Logs($exception);
                     http_response_code(500);
                     require '../Views/500.php';
                 }

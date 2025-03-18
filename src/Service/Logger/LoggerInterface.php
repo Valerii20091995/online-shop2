@@ -4,6 +4,6 @@ namespace Service\Logger;
 
 interface LoggerInterface
 {
-    public function Errors(\Throwable $exception);
+    public function Logs(\Throwable $exception);
 
 }
