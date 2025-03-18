@@ -2,9 +2,18 @@
 namespace Core;
 use Request\RegistrateRequest;
 use Request\LoginRequest;
+use Service\Logger\LoggerFileErrorService;
+use Service\Logger\LoggerInterface;
+use Service\Logger\LoggerDataBaseService;
 
 class App
 {
+    private LoggerInterface $loggerService;
+
+    public function __construct()
+    {
+        $this->loggerService = new LoggerDataBaseService();
+    }
     private array $routes = [];
     public function run()
     {
@@ -19,15 +28,18 @@ class App
                 $method = $handler['method'];
                 $controller = new $class();
                 $requestClass = $handler['request'];
-                if ($requestClass !== null) {
-                    $request = new $requestClass($_POST);
-                    $controller->$method($request);
-                } else {
-                    $controller->$method();
+                try {
+                    if ($requestClass !== null) {
+                        $request = new $requestClass($_POST);
+                        $controller->$method($request);
+                    } else {
+                        $controller->$method();
+                    }
+                } catch (\Throwable $exception) {
+                    $this->loggerService->Errors($exception);
+                    http_response_code(500);
+                    require '../Views/500.php';
                 }
-
-
-
             } else {
                 echo "$requestMethod не поддерживается для $requestUri";
             }
@@ -38,6 +50,7 @@ class App
         }
 
     }
+
     public function get(string $route,string $className, string $method, $requestClass = null)
     {
         $this->routes[$route]['GET'] = [

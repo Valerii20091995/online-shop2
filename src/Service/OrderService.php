@@ -17,6 +17,7 @@ class OrderService
     private Order $orderModel;
     private AuthInterface $authService;
     private Product $productModel;
+    private CartService $cartService;
     public function __construct()
     {
         $this->orderProductModel = new OrderProduct();
@@ -24,11 +25,18 @@ class OrderService
         $this->orderModel = new Order();
         $this->authService = new authSessionService();
         $this->productModel = new Product();
+        $this->cartService = new CartService();
     }
 
     public function handleCheckOut(OrderCreateDTO $data)
     {
+        $sum = $this->cartService->getSum();
+        if ($sum < 500) {
+            throw new \Exception('Для оформления заказа сумма корзины должна быть больше 500');
+        }
+
         $user = $this->authService->getCurrentUser();
+
         $orderId = $this->orderModel->addOrder(
             $data->getName(),
             $data->getPhone(),

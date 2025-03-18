@@ -66,7 +66,7 @@ class CartService
         }
         return $userProducts;
     }
-    public function getSum(array $userProducts):int
+    public function getSum():int
     {
         $total = 0;
         foreach ($this->getUserProducts() as $userProduct) {

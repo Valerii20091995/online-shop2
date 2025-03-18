@@ -30,7 +30,4 @@ $app->get('/orders', OrderController::class, 'getAllOrders');
 $app->post('/decrease-product', CartController::class, 'decreaseProduct',\Request\DecreaseProductRequest::class);
 $app->post('/product-review', ReviewController::class, 'getProduct');
 $app->post('/reviews', ReviewController::class, 'addReview', \Request\AddReviewRequest::class);
-
-
-
 $app->run();
