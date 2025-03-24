@@ -21,7 +21,7 @@ class DecreaseProductRequest extends Request
         $errors = [];
         if (isset($this->data['product_id'])) {
             $productId = (int)$this->data['product_id'];
-            $data = $this->productModel->getOneById($productId);
+            $data = Product::getOneById($productId);
             if ($data === false) {
                 $errors['product_id'] = 'Product не найден';
             }

@@ -49,7 +49,7 @@ class RegistrateRequest extends Request
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors['email'] = "Некорректный email";
             } else {
-                $user = $this->userModel->getByEmail($email);
+                $user = User::getByEmail($email);
 
                 if ($user !== null) {
                     $errors['email'] = "Этот Email уже зарегестрирован!";

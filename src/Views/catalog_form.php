@@ -26,7 +26,7 @@
                 </a>
             </div>
 
-            <form action="/add-product" method="POST" class="product-form">
+            <form  class="product-form" onsubmit="return false" method="POST">
                 <input type="hidden" name="product_id" value="<?php echo $userProduct->getProduct()->getId(); ?>" id="product_id" required>
                 <input type="hidden" name="amount" value="1">
                 <button type="submit" class="add-product-btn">+</button>
@@ -48,6 +48,27 @@
         <?php endforeach; ?>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    $("document").ready(function () {
+        // var form = $('.product-form');
+        $('.product-form').submit(function () {
+            $.ajax({
+                type: "POST",
+                url: "/add-product",
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function (responce) {
+                    console.log('Продукт добавлен в корзину')
+                },
+                error: function(xhr, status, error) {
+                    console.error('Ошибка при добавлении товара:', error);
+                }
+            });
+        });
+    });
+</script>
+
 <style>
     body {
         font-family: 'Arial', sans-serif;

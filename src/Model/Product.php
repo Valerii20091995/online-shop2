@@ -9,11 +9,11 @@ class Product extends Model
     private string $image_url;
 
     private int $amountInCart;
-    protected function getTableName():string
+    protected static function getTableName():string
     {
         return "products";
     }
-    private function createObject(array $product):self|null
+    public static function createObject(array $product):self|null
     {
         if(!$product) {
             return null;
@@ -27,20 +27,22 @@ class Product extends Model
         return $object;
     }
 
-    public function getOneById($productId):self|null
+    public static function getOneById($productId):self|null
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM {$this->getTableName()} WHERE id = :productId");
+        $tableName = self::getTableName();
+        $stmt = static::getPDO()->prepare("SELECT * FROM $tableName WHERE id = :productId");
         $stmt->execute(['productId' => $productId]);
         $product = $stmt->fetch();
-        return $this->createObject($product);
+        return static::createObject($product);
     }
-    public function getByCatalog(int $userId):array|false
+    public static function getByCatalog(int $userId):array|false
     {
-        $stmt = $this->pdo->query("SELECT * FROM {$this->getTableName()}");
+        $tableName = self::getTableName();
+        $stmt = static::getPDO()->query("SELECT * FROM $tableName");
         $products = $stmt->fetchAll();
         $newProducts = [];
         foreach ($products as $product) {
-            $newProducts[] = $this->createObject($product);
+            $newProducts[] = static::createObject($product);
         }
         return $newProducts;
 

@@ -6,11 +6,11 @@ class User extends Model
     private string $name;
     private string $email;
     private string $password;
-    protected function getTableName():string
+    protected static function getTableName():string
     {
         return "users";
     }
-    public function createObj(array $user):self|null
+    public static function createObj(array $user):self|null
     {
         if (!$user) {
             return null;
@@ -23,39 +23,44 @@ class User extends Model
         return $obj;
     }
 
-    public function getByEmail(string $email):self|null
+    public static function getByEmail(string $email):self|null
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM {$this->getTableName()} WHERE email = :email");
+        $tableName = static::getTableName();
+        $stmt = self::getPDO()->prepare("SELECT * FROM $tableName WHERE email = :email");
         $stmt->execute([':email' => $email]);
         $user = $stmt->fetch();
         if (!$user) {
             return null;
         }
-        return $this->createObj($user);
+        return self::createObj($user);
     }
-    public function addUser(string $name, string $email, string $password):array|false
+    public static function addUser(string $name, string $email, string $password):array|false
     {
-        $stmt = $this->pdo->prepare("INSERT INTO {$this->getTableName()} (name, email, password) VALUES (:name, :email, :password)");
+        $tableName = static::getTableName();
+        $stmt = self::getPDO()->prepare("INSERT INTO $tableName (name, email, password) VALUES (:name, :email, :password)");
         $stmt->execute([':name' => $name, ':email' => $email, ':password' => $password]);
         $result = $stmt->fetch();
         return $result;
     }
-    public function userVerification(int $userId):self|null
+    public static function userVerification(int $userId):self|null
     {
-        $stmt = $this->pdo->query("SELECT * FROM {$this->getTableName()} WHERE id = " . $_SESSION['userId']);
+        $tableName = static::getTableName();
+        $stmt = self::getPDO()->query("SELECT * FROM $tableName WHERE id = " . $_SESSION['userId']);
         $user = $stmt->fetch();
-        return $this->createObj($user);
+        return self::createObj($user);
     }
-    public function updateEmailByID(string $email, int $userId)
+    public static function updateEmailByID(string $email, int $userId)
     {
-        $stmt = $this->pdo->prepare("UPDATE {$this->getTableName()} SET email = :email WHERE id = $userId");
+        $tableName = static::getTableName();
+        $stmt = self::getPDO()->prepare("UPDATE $tableName SET email = :email WHERE id = $userId");
         $stmt->execute([':email' => $email]);
         $result = $stmt->fetch();
         return $result;
     }
-    public function updateNamedByID(string $name, int $userId)
+    public static function updateNamedByID(string $name, int $userId)
     {
-        $stmt = $this->pdo->prepare("UPDATE {$this->getTableName()} SET name = :name WHERE id = $userId");
+        $tableName = static::getTableName();
+        $stmt = self::getPDO()->prepare("UPDATE $tableName SET name = :name WHERE id = $userId");
         $stmt->execute([':name' => $name]);
         $result = $stmt->fetch();
         return $result;

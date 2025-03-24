@@ -36,7 +36,7 @@ class EditProfileRequest extends Request
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors['email'] = "Некорректный email";
             } else {
-                $user = $this->userModel->getByEmail($email);
+                $user = User::getByEmail($email);
                 $userId = $_SESSION['userId'];
                 if ($user && $user->getEmail() === $email && $user->getId() !== $userId) {
                     $errors['email'] = "Этот Email уже зарегистрирован!";

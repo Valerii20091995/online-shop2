@@ -9,10 +9,8 @@ use Request\RegistrateRequest;
 
 class UserController extends BaseController
 {
-    private User $userModel;
     public function __construct()
     {
-        $this->userModel = new User();
         parent::__construct();
     }
     public function getRegistrate()
@@ -27,8 +25,8 @@ class UserController extends BaseController
 //            $passwordRepeat = $request->getPassword();
             $password = password_hash($request->getPassword(), PASSWORD_DEFAULT);
             //добавление  новых пользователей
-            $user = $this->userModel->addUser($request->getName(), $request->getEmail(), $request->getPassword());
-            $user = $this->userModel->getByEmail($request->getEmail());
+            $user = User::addUser($request->getName(), $request->getEmail(), $request->getPassword());
+            $user = User::getByEmail($request->getEmail());
         }
         require_once '../Views/registration_form.php';
     }
@@ -86,12 +84,12 @@ class UserController extends BaseController
         $errors = $request->Validate();
         if (empty($errors)) {
             $userId = $this->authService->getCurrentUser();
-            $user = $this->userModel->userVerification($userId->getId());
+            $user = User::userVerification($userId->getId());
             if ($user->getName() !== $request->getName()) {
-                $this->userModel->updateNamedByID($request->getName(), $userId->getId());
+                User::updateNamedByID($request->getName(), $userId->getId());
             }
             if ($user->getEmail() !== $request->getEmail()) {
-                $this->userModel->updateEmailByID($request->getEmail(), $user->getId());
+                User::updateEmailByID($request->getEmail(), $user->getId());
             }
             header("Location: ./profile");
             exit;

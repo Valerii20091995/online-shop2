@@ -1,22 +1,20 @@
 <?php
 namespace Controllers;
 use DTO\OrderCreateDTO;
-use Model\UserProduct;
 use Request\OrderRequest;
 use Service\CartService;
 use Service\OrderService;
+use Model\UserProduct;
 
 
 class OrderController extends BaseController
 {
-    private UserProduct $userProductModel;
     private OrderService $orderService;
     private CartService $cartService;
 
     public function __construct()
     {
         parent::__construct();
-        $this->userProductModel = new UserProduct();
         $this->orderService = new OrderService();
         $this->cartService = new CartService();
     }
@@ -24,7 +22,7 @@ class OrderController extends BaseController
     {
         if ($this->authService->check()) {
             $user = $this->authService->getCurrentUser();
-            $orderProducts = $this->userProductModel->getAllByUserId($user->getId());
+            $orderProducts = UserProduct::getAllByUserIdWithProducts($user->getId());
             if (empty($orderProducts)) {
                 header('Location: /catalog');
                 exit();

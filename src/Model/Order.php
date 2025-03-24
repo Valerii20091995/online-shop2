@@ -14,11 +14,11 @@ class Order extends Model
     private int $sum;
     private array $products =[];
 
-    protected function getTableName():string
+    protected static function getTableName():string
     {
         return "orders";
     }
-    private function createObject(array $userOrder):self|null
+    public static function createObject(array $userOrder):self|null
     {
         if(!$userOrder) {
             return null;
@@ -33,10 +33,11 @@ class Order extends Model
         return $object;
 
     }
-    public function addOrder(string $name, string $phone, string $comment, string $address, int $userId):int|false
+    public static function addOrder(string $name, string $phone, string $comment, string $address, int $userId):int|false
     {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO {$this->getTableName()} (name, phone, comment, address, user_Id) 
+        $tableName = self::getTableName();
+        $stmt = static::getPDO()->prepare(
+            "INSERT INTO $tableName (name, phone, comment, address, user_Id) 
                    VALUES (:name, :phone, :comment, :address, :user_id) RETURNING id");
         $stmt->execute([
             ':name' => $name,
@@ -49,16 +50,26 @@ class Order extends Model
 
         return $data['id'];
     }
-    public function getAllByUserId(int $userId):array|false
+    public static function getAllByUserId(int $userId):array|false
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM {$this->getTableName()} WHERE user_id = :userId");
+
+        $tableName = self::getTableName();
+        $orderProductsTableName = OrderProduct::getTableName();
+        $productsTable = Product::getTableName();
+        $stmt = static::getPDO()->prepare(
+            "SELECT o.*, op.product_id, op.amount, p.name as product_name, p.price, p.image
+                   FROM $tableName o 
+                   INNER JOIN $orderProductsTableName op ON op.order_id = o.id    
+                   INNER JOIN $productsTable p ON op.product_id = p.id
+                   WHERE o.user_id = :userId");
         $stmt->execute([':userId' => $userId]);
-         $userOrders = $stmt->fetchAll();
-         $newUserOrders = [];
-         foreach ($userOrders as $userOrder) {
-             $newUserOrders[] = $this->createObject($userOrder);
+        $orderData = $stmt->fetchAll();
+        $orders = [];
+
+         foreach ($orderData as $OrderData) {
+            $orders[] = static::createObject($orderData);
          }
-         return $newUserOrders;
+         return $orders;
 
     }
 

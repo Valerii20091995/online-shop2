@@ -34,8 +34,8 @@ class CartController extends BaseController
         if (empty($errors)) {
             $dto = new DecreaseProductDTO($request->getProductId());
             $this->cartService->decreaseProduct($dto);
-            header('Location: /catalog');
-            exit();
+//            header('Location: /catalog');
+//            exit();
         }
     }
     public function addProduct(AddProductRequest $request)
@@ -50,8 +50,8 @@ class CartController extends BaseController
         if (empty($errors)) {
             $dto = new AddProductDTO($request->getProductId());
             $this->cartService->addProduct($dto);
-            header('Location: /catalog');
-            exit();
+//            header('Location: /catalog');
+//            exit();
         }
     }
 

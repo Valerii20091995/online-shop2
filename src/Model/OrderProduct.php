@@ -10,11 +10,11 @@ class OrderProduct extends Model
     private int $amount;
     private Product $product;
     private int $sum;
-    protected function getTableName():string
+    protected static function getTableName():string
     {
         return "order_products";
     }
-    private function createObject($orderProduct):self|null
+    public static function createObject($orderProduct):self|null
     {
         if(!$orderProduct){
             return null;
@@ -27,25 +27,31 @@ class OrderProduct extends Model
         return $object;
     }
 
-    public function create(int $orderId, int $productId,int $amount)
+    public static function create(int $orderId, int $productId,int $amount)
     {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO {$this->getTableName()} (order_id, product_id, amount) 
+        $tableName = self::getTableName();
+        $stmt = static::getPDO()->prepare(
+            "INSERT INTO $tableName (order_id, product_id, amount) 
              VALUES (:orderId, :productId, :amount)");
         $stmt->execute(['orderId' => $orderId, 'productId' => $productId, 'amount' => $amount]);
     }
-    public function getAllByOrderId(int $orderId):array|false
+    public static function getAllByOrderId(int $orderId):array|false
     {
-        $stmt = $this->pdo->prepare(
-            "SELECT * FROM {$this->getTableName()} WHERE order_id = :orderId"
+        $tableName = self::getTableName();
+        $productsTable = Product::getTableName();
+        $stmt = static::getPDO()->prepare(
+            "SELECT op.*, p.name as product_name, p.price, p.image
+            FROM $tableName op
+            INNER JOIN $productsTable p ON op.product_id = p.id
+            WHERE op.order_id = :orderId"
         );
         $stmt->execute(['orderId' => $orderId]);
         $orderProducts = $stmt->fetchAll();
-        $newOrderProducts = [];
+        $result = [];
         foreach ($orderProducts as $orderProduct) {
-            $newOrderProducts[] = $this->createObject($orderProduct);
+            $result[] = self::createObject($orderProduct);
         }
-        return $newOrderProducts;
+        return $result;
     }
 
     public function getId(): int

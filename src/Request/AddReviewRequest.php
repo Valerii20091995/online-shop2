@@ -35,8 +35,7 @@ class AddReviewRequest extends Request
             if (!is_numeric($this->data['product_id'])) {
                 $errors['product_id'] = "id продукта может содержать только цифры";
             } else {
-                $productModel = new Product();
-                $product = $productModel->getOneById($this->data['product_id']);
+                $product = Product::getOneById($this->data['product_id']);
                 if (!$product) {
                     $errors['product_id'] = 'id c таким продуктом не существует';
                 }

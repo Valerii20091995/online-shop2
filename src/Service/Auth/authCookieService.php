@@ -21,14 +21,14 @@ class authCookieService implements AuthInterface
     {
         if ($this->check()) {
             $userId = $_COOKIE['userId'];
-            return $this->userModel->userVerification($userId);
+            return User::userVerification($userId);
         } else {
             return null;
         }
     }
     public function auth(AuthenticationDTO $data): bool
     {
-        $user = $this->userModel->getByEmail($data->getEmail());
+        $user = User::getByEmail($data->getEmail());
         if ($user === null) {
             return false;
         } else {

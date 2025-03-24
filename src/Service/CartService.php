@@ -12,13 +12,9 @@ use Service\Auth\authSessionService;
 
 class CartService
 {
-    private  UserProduct $userProductModel;
-    private Product $productModel;
     private AuthInterface $authService;
     public function __construct()
     {
-        $this->userProductModel = new UserProduct();
-        $this->productModel = new Product();
         $this->authService = new authSessionService();
     }
     public function addProduct(AddProductDTO $data)
@@ -26,12 +22,12 @@ class CartService
         $user = $this->authService->getCurrentUser();
         $userId = $user->getId();
         $amount = 1;
-        $products = $this->userProductModel->getByUserProducts($userId, $data->getProductId());
+        $products = UserProduct::getByUserProducts($userId, $data->getProductId());
         if ($products === null) {
-            $this->userProductModel->addProductByUser($userId,$data->getProductId(), $amount);
+            UserProduct::addProductByUser($userId,$data->getProductId(), $amount);
         }else {
             $newAmount = 1 + $products->getAmount();
-            $this->userProductModel->updateProductByUser($newAmount, $data->getProductId(), $userId);
+            UserProduct::updateProductByUser($newAmount, $data->getProductId(), $userId);
 
         }
     }
@@ -39,14 +35,14 @@ class CartService
     {
         $user = $this->authService->getCurrentUser();
         $userId = $user->getId();
-        $products = $this->userProductModel->getByUserProducts($userId, $data->getProductId());
+        $products = UserProduct::getByUserProducts($userId, $data->getProductId());
         if ($products !== null) {
             $amount = $products->getAmount();
             if ($amount > 1) {
                 $newAmount = $amount - 1;
-                $this->userProductModel->updateProductByUser($newAmount, $data->getProductId(), $userId);
+                UserProduct::updateProductByUser($newAmount, $data->getProductId(), $userId);
             } else {
-                $this->userProductModel->removeProductInCart($data->getProductId(), $userId);
+                UserProduct::removeProductInCart($data->getProductId(), $userId);
             }
         }
     }
@@ -57,14 +53,15 @@ class CartService
         if ($user == null) {
             return [];
         }
-        $userProducts = $this->userProductModel->getAllByUserId($user->getId());
-        foreach ($userProducts as $userProduct) {
-            $product = $this->productModel->getOneById($userProduct->getProductId());
-            $userProduct->setProduct($product);
-            $totalSum = $userProduct->getAmount() * $product->getPrice();
-            $userProduct->setTotalSum($totalSum);
-        }
-        return $userProducts;
+        return UserProduct::getAllByUserIdWithProducts($user->getId());
+//        $userProducts = UserProduct::getAllByUserIdWithProducts($user->getId());
+//        foreach ($userProducts as $userProduct) {
+//            $product = Product::getOneById($userProduct->getProductId());
+//            $userProduct->setProduct($product);
+//            $totalSum = $userProduct->getAmount() * $product->getPrice();
+//            $userProduct->setTotalSum($totalSum);
+//        }
+//        return $userProducts;
     }
     public function getSum():int
     {
