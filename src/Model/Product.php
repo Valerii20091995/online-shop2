@@ -13,16 +13,21 @@ class Product extends Model
     {
         return "products";
     }
+    public function __construct(string $name, int $price)
+    {
+        $this->name = $name;
+        $this->price = $price;
+    }
     public static function createObject(array $product):self|null
     {
         if(!$product) {
             return null;
         }
-        $object = new self();
+        $object = new self($product['name'], intval($product['price']));
         $object->id = $product['id'];
         $object->name = $product['name'];
         $object->description = $product['description'];
-        $object->price = $product['price'];
+        $object->price = (int)$product['price'];
         $object->image_url = $product['image_url'];
         return $object;
     }
@@ -76,6 +81,16 @@ class Product extends Model
     public function setAmountInCart($amountInCart): void
     {
         $this->amountInCart = $amountInCart;
+    }
+
+    public function setPrice(int $price): void
+    {
+        $this->price = $price;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 
 }

@@ -33,9 +33,14 @@ class CartController extends BaseController
         $errors = $request->Validate();
         if (empty($errors)) {
             $dto = new DecreaseProductDTO($request->getProductId());
-            $this->cartService->decreaseProduct($dto);
-//            header('Location: /catalog');
-//            exit();
+            $amount = $this->cartService->decreaseProduct($dto);
+            $result = [
+                'amount' => $amount,
+                'removed' => ($amount === 0)
+            ];
+            echo json_encode($result);
+            exit();
+
         }
     }
     public function addProduct(AddProductRequest $request)
@@ -49,9 +54,13 @@ class CartController extends BaseController
         $errors = $request->Validate();
         if (empty($errors)) {
             $dto = new AddProductDTO($request->getProductId());
-            $this->cartService->addProduct($dto);
-//            header('Location: /catalog');
-//            exit();
+            $amount = $this->cartService->addProduct($dto);
+            $result = [
+                'amount' => $amount
+            ];
+            echo json_encode($result);
+            exit();
+
         }
     }
 

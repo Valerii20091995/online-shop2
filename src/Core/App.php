@@ -32,6 +32,7 @@ class App
                     if ($requestClass !== null) {
                         $request = new $requestClass($_POST);
                         $controller->$method($request);
+
                     } else {
                         $controller->$method();
                     }

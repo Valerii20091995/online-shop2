@@ -17,7 +17,7 @@ class CartService
     {
         $this->authService = new authSessionService();
     }
-    public function addProduct(AddProductDTO $data)
+    public function addProduct(AddProductDTO $data):int
     {
         $user = $this->authService->getCurrentUser();
         $userId = $user->getId();
@@ -25,26 +25,32 @@ class CartService
         $products = UserProduct::getByUserProducts($userId, $data->getProductId());
         if ($products === null) {
             UserProduct::addProductByUser($userId,$data->getProductId(), $amount);
+            return 1;
         }else {
             $newAmount = 1 + $products->getAmount();
             UserProduct::updateProductByUser($newAmount, $data->getProductId(), $userId);
+            return $newAmount;
 
         }
     }
-    public function decreaseProduct(DecreaseProductDTO $data)
+    public function decreaseProduct(DecreaseProductDTO $data):int
     {
         $user = $this->authService->getCurrentUser();
         $userId = $user->getId();
         $products = UserProduct::getByUserProducts($userId, $data->getProductId());
-        if ($products !== null) {
-            $amount = $products->getAmount();
-            if ($amount > 1) {
-                $newAmount = $amount - 1;
-                UserProduct::updateProductByUser($newAmount, $data->getProductId(), $userId);
-            } else {
-                UserProduct::removeProductInCart($data->getProductId(), $userId);
-            }
+        if ($products === null) {
+            return 0;
         }
+        $amount = $products->getAmount();
+        if ($amount > 1) {
+            $newAmount = $amount - 1;
+            UserProduct::updateProductByUser($newAmount, $data->getProductId(), $userId);
+            return $newAmount;
+        } else {
+                UserProduct::removeProductInCart($data->getProductId(), $userId);
+                return 0;
+        }
+
     }
     public function getUserProducts()
     {
@@ -53,15 +59,12 @@ class CartService
         if ($user == null) {
             return [];
         }
-        return UserProduct::getAllByUserIdWithProducts($user->getId());
-//        $userProducts = UserProduct::getAllByUserIdWithProducts($user->getId());
-//        foreach ($userProducts as $userProduct) {
-//            $product = Product::getOneById($userProduct->getProductId());
-//            $userProduct->setProduct($product);
-//            $totalSum = $userProduct->getAmount() * $product->getPrice();
-//            $userProduct->setTotalSum($totalSum);
-//        }
-//        return $userProducts;
+        $userProducts = UserProduct::getAllByUserIdWithProducts($user->getId());
+        foreach ($userProducts as $userProduct) {
+            $totalSum = $userProduct->getAmount() * $userProduct->getProduct()->getPrice();
+            $userProduct->setTotalSum($totalSum);
+        }
+        return $userProducts;
     }
     public function getSum():int
     {

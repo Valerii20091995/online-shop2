@@ -40,7 +40,7 @@ class OrderProduct extends Model
         $tableName = self::getTableName();
         $productsTable = Product::getTableName();
         $stmt = static::getPDO()->prepare(
-            "SELECT op.*, p.name as product_name, p.price, p.image
+            "SELECT op.*, p.name AS product_name, p.price, p.image_url
             FROM $tableName op
             INNER JOIN $productsTable p ON op.product_id = p.id
             WHERE op.order_id = :orderId"
@@ -68,6 +68,27 @@ class OrderProduct extends Model
     {
         return $this->product_id;
     }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function setProductId(int $product_id): void
+    {
+        $this->product_id = $product_id;
+    }
+
+    public function setOrderId(int $order_id): void
+    {
+        $this->order_id = $order_id;
+    }
+
+    public function setAmount(int $amount): void
+    {
+        $this->amount = $amount;
+    }
+
 
     public function getAmount(): int
     {

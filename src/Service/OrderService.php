@@ -23,6 +23,8 @@ class OrderService
     public function handleCheckOut(OrderCreateDTO $data)
     {
         $sum = $this->cartService->getSum();
+
+
         if ($sum < 500) {
             throw new \Exception('Для оформления заказа сумма корзины должна быть больше 500');
         }
@@ -49,20 +51,6 @@ class OrderService
     {
         $user = $this->authService->getCurrentUser();
         $orders = Order::getAllByUserId($user->getId());
-
-//        foreach ($orders as $order) {
-//            $totalSum = 0;
-//            foreach ($order->getOrderProducts() as $orderProduct) {
-//                $totalSum += $orderProduct->getAmount() * $orderProduct->getPrice();
-//            }
-//            $order->setSum($totalSum);
-//        }
-//        print_r($orders);
-//        die;
-//        return $orders;
-//
-//    }
-
         foreach ($orders as $userOrder) {
             $orderProducts = OrderProduct::getAllByOrderId($userOrder->getId());
             $totalSum = 0;
@@ -81,6 +69,7 @@ class OrderService
         }
         return $orders;
     }
+
 
 
 }

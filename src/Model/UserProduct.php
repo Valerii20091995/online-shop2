@@ -24,16 +24,16 @@ class UserProduct extends Model
         $object->product_id = $userProduct['product_id'];
         $object->amount = $userProduct['amount'];
 
-        $productData = [
-            "id" => $userProduct['product_id'],
-            "name" => $userProduct['name'],
-            "description" => $userProduct['description'],
-            "price" => $userProduct['price'],
-            "image_url" => $userProduct['image_url'],
-        ];
-        $product = Product::createObject($productData);
+        return $object;
+    }
+    public static function ObjectWithProduct(array $userProduct):self|null
+    {
+        if(!$userProduct){
+            return null;
+        }
+        $object = self::createObject($userProduct);
+        $product = Product::createObject($userProduct);
         $object->setProduct($product);
-        $object->setTotalSum($object->getAmount() * $product->getPrice());
         return $object;
     }
     public static function getByUserProducts(int $userId, int $productId):self|null
@@ -74,7 +74,7 @@ class UserProduct extends Model
         $UserProducts = $stmt->fetchAll();
         $newUserProducts =[];
         foreach ($UserProducts as $UserProduct) {
-            $newUserProducts[] = static::createObject($UserProduct);
+            $newUserProducts[] = static::ObjectWithProduct($UserProduct);
         }
         return $newUserProducts;
 
@@ -123,6 +123,7 @@ class UserProduct extends Model
 
     public function setProduct(Product $product): void
     {
+
         $this->product = $product;
     }
     public function getTotalSum():int

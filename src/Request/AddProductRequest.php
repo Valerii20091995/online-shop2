@@ -4,11 +4,9 @@ namespace Request;
 use Model\Product;
 class AddProductRequest extends Request
 {
-    private Product $productModel;
     public function __construct(array $data)
     {
         parent::__construct($data);
-        $this->productModel = new Product();
     }
     public function getProductId(): int
     {

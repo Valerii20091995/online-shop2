@@ -14,6 +14,7 @@ class Order extends Model
     private int $sum;
     private array $products =[];
 
+    private array $orderProducts = [];
     protected static function getTableName():string
     {
         return "orders";
@@ -52,25 +53,45 @@ class Order extends Model
     }
     public static function getAllByUserId(int $userId):array|false
     {
-
         $tableName = self::getTableName();
         $orderProductsTableName = OrderProduct::getTableName();
         $productsTable = Product::getTableName();
+
         $stmt = static::getPDO()->prepare(
-            "SELECT o.*, op.product_id, op.amount, p.name as product_name, p.price, p.image
-                   FROM $tableName o 
-                   INNER JOIN $orderProductsTableName op ON op.order_id = o.id    
-                   INNER JOIN $productsTable p ON op.product_id = p.id
-                   WHERE o.user_id = :userId");
+            "SELECT o.*, op.product_id, op.amount, p.name AS product_name, p.price
+        FROM $tableName o
+        INNER JOIN $orderProductsTableName op ON op.order_id = o.id
+        INNER JOIN $productsTable p ON op.product_id = p.id
+        WHERE o.user_id = :userId"
+        );
         $stmt->execute([':userId' => $userId]);
         $orderData = $stmt->fetchAll();
+
         $orders = [];
+        foreach ($orderData as $order) {
+            // Проверяем, если заказ уже существует в массиве
+            if (!isset($orders[$order['id']])) {
+                // Создаем новый объект Order
+                $orders[$order['id']] = static::createObject($order);
+                $orders[$order['id']]->orderProducts = [];
+                // Инициализируем массив для хранения продуктов
+            }
+            // Создаем объект для каждого товара в заказе
+            $orderProduct = new OrderProduct();
+            $orderProduct->setProductId($order['product_id']);
+            $orderProduct->setAmount($order['amount']);
+            $product = new Product($order['product_name'], intval($order['price']));
+            $orderProduct->setProduct($product);
 
-         foreach ($orderData as $OrderData) {
-            $orders[] = static::createObject($orderData);
-         }
-         return $orders;
+            // Добавляем товар в массив товаров заказа
+            $orders[$order['id']]->orderProducts[] = $orderProduct;
 
+        }
+        return array_values($orders);
+    }
+    public function getOrderProducts():array
+    {
+        return $this->orderProducts;
     }
 
     public function getId(): int
@@ -132,9 +153,15 @@ class Order extends Model
     {
         $this->products = $products;
     }
+
+//    public function getOrderProducts(): array
+//    {
+//        return $this->orderProducts;
+//    }
+
     public function setOrderProducts(array $orderProducts): void
     {
-        $this->products = $orderProducts;
+        $this->orderProducts = $orderProducts;
     }
 
 

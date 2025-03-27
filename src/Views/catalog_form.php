@@ -26,7 +26,7 @@
                 </a>
             </div>
 
-            <form  class="product-form" onsubmit="return false" method="POST">
+            <form  class="add-product-form" onsubmit="return false" method="POST">
                 <input type="hidden" name="product_id" value="<?php echo $userProduct->getProduct()->getId(); ?>" id="product_id" required>
                 <input type="hidden" name="amount" value="1">
                 <button type="submit" class="add-product-btn">+</button>
@@ -36,7 +36,7 @@
                 </div>
             </form>
         <?php if ($userProduct->getAmount() > 0): ?>
-            <form action="/decrease-product" method="POST" class="product-form">
+            <form method="POST"  onsubmit="return false" class="decrease-product-form">
                 <input type="hidden" name="product_id" value="<?php echo $userProduct->getProduct()->getId(); ?>" id="product_id" required>
                 <button type="submit"  class="remove-product-btn">-</button>
             </form>
@@ -52,17 +52,37 @@
 <script>
     $("document").ready(function () {
         // var form = $('.product-form');
-        $('.product-form').submit(function () {
+        $('.add-product-form').submit(function () {
             $.ajax({
                 type: "POST",
                 url: "/add-product",
                 data: $(this).serialize(),
                 dataType: 'json',
-                success: function (responce) {
-                    console.log('Продукт добавлен в корзину')
+                success: function (response) {
+                    console.log(response);
+                    $('.product-quantity').text(response.amount + ' шт')
                 },
                 error: function(xhr, status, error) {
                     console.error('Ошибка при добавлении товара:', error);
+                }
+            });
+        });
+        $('.decrease-product-form').submit(function () {
+            $.ajax({
+                type: "POST",
+                url: "/decrease-product",
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function (response) {
+
+                    console.log('response')
+                    $('.product-quantity').text(response.amount + ' шт')
+                    if (response.amount <= 0) {
+                        $form.hide();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Ошибка при удалении товара:', error);
                 }
             });
         });
