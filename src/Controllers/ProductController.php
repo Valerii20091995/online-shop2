@@ -24,6 +24,7 @@ class ProductController extends BaseController
             $userProducts = UserProduct::getAllByUserIdWithProducts($user->getId());
             $products = Product::getByCatalog($user->getId());
             $newProducts = [];
+            $totalCount = 0;
 
             foreach ($products as $product) {
 //                смотрим есть ли товар в корзине? используя false and true
@@ -33,6 +34,7 @@ class ProductController extends BaseController
                         $userProduct->setProduct($product);
                         $newProducts[] = $userProduct;
                         $issetProduct = true;
+                        $totalCount += $userProduct->getAmount();
                         break;
                     }
                 }

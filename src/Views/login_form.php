@@ -1,11 +1,13 @@
 <div class="wrapper">
     <form class="form-signin" action="./login" method="POST">
         <h2 class="form-signin-heading">Please login</h2>
-        <input type="text" class="form-control" name="email" placeholder="Email Address" required="" autofocus="" />
+        <label for="email" class="sr-only">Email Address</label>
+        <input type="text" class="form-control" name="email" id="email" placeholder="Email Address" required autofocus="" />
         <?php if (isset($errors['autorization'])):  ?>
             <label style="color: red"><?php echo $errors['autorization'];?></label>
         <?php endif; ?>
-        <input type="password" class="form-control" name="password" placeholder="Password" required=""/>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" class="form-control" name="password" id="password" placeholder="Password" required/>
         <?php if (isset($errors['autorization'])):  ?>
             <label style="color: red"><?php echo $errors['autorization'];?></label>
         <?php endif; ?>
